@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="400.0" maxWidth="600.0" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coinTradingSystem.UI.connectAPI">
+   <children>
+      <Pane prefHeight="400.0" prefWidth="600.0">
+         <children>
+            <Group layoutY="5.0">
+               <children>
+                  <RadioButton layoutX="75.0" layoutY="52.0" mnemonicParsing="false" selected="true" text="BINANCE">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="Exchange" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton layoutX="206.0" layoutY="52.0" mnemonicParsing="false" text="GATEIO" toggleGroup="$Exchange" />
+                  <RadioButton layoutX="332.0" layoutY="52.0" mnemonicParsing="false" text="MEXC" toggleGroup="$Exchange" />
+                  <RadioButton layoutX="450.0" layoutY="52.0" mnemonicParsing="false" text="HUOBI" toggleGroup="$Exchange" />
+               </children>
+            </Group>
+            <TextField fx:id="API_KEY" layoutX="160.0" layoutY="149.0" prefHeight="32.0" prefWidth="371.0" />
+            <Label layoutX="78.0" layoutY="143.0" prefHeight="44.0" prefWidth="46.0" text="API KEY" textAlignment="CENTER" />
+            <TextField fx:id="SECRET_KEY" layoutX="160.0" layoutY="204.0" prefHeight="32.0" prefWidth="371.0" />
+            <Label layoutX="63.0" layoutY="198.0" prefHeight="44.0" prefWidth="77.0" text="SECRET KEY" textAlignment="CENTER" />
+            <CheckBox fx:id="toDatabase" layoutX="375.0" layoutY="253.0" mnemonicParsing="false" text="データベースに保存">
+               <font>
+                  <Font name="Arial" size="14.0" />
+               </font>
+            </CheckBox>
+            <Button layoutX="75.0" layoutY="310.0" mnemonicParsing="false" onMouseClicked="#onSaveButtonClicked" prefHeight="61.0" prefWidth="451.0" text="保存" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>
