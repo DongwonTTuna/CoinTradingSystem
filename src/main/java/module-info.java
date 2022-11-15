@@ -5,6 +5,10 @@ module com.example.cointradingsystem {
     requires org.controlsfx.controls;
     requires org.kordamp.bootstrapfx.core;
     requires java.sql;
+    requires org.json;
+    requires commons.codec;
+    requires okhttp3;
+    requires binance.api.client;
 
     opens com.coinTradingSystem to javafx.fxml;
     exports com.coinTradingSystem;

@@ -25,14 +25,14 @@
             </Group>
             <TextField fx:id="API_KEY" layoutX="160.0" layoutY="149.0" prefHeight="32.0" prefWidth="371.0" />
             <Label layoutX="78.0" layoutY="143.0" prefHeight="44.0" prefWidth="46.0" text="API KEY" textAlignment="CENTER" />
-            <TextField fx:id="SECRET_KEY" layoutX="160.0" layoutY="204.0" prefHeight="32.0" prefWidth="371.0" />
+            <PasswordField fx:id="SECRET_KEY" layoutX="160.0" layoutY="204.0" prefHeight="32.0" prefWidth="371.0" />
             <Label layoutX="63.0" layoutY="198.0" prefHeight="44.0" prefWidth="77.0" text="SECRET KEY" textAlignment="CENTER" />
             <CheckBox fx:id="toDatabase" layoutX="375.0" layoutY="253.0" mnemonicParsing="false" text="データベースに保存">
                <font>
                   <Font name="Arial" size="14.0" />
                </font>
             </CheckBox>
-            <Button layoutX="75.0" layoutY="310.0" mnemonicParsing="false" onMouseClicked="#onSaveButtonClicked" prefHeight="61.0" prefWidth="451.0" text="保存" />
+            <Button fx:id="LoginButton" layoutX="75.0" layoutY="310.0" mnemonicParsing="false" prefHeight="61.0" prefWidth="451.0" text="保存" />
          </children>
       </Pane>
    </children>

@@ -28,7 +28,7 @@
                   <RadioButton layoutX="47.0" layoutY="27.0" mnemonicParsing="false" selected="true" text="BINANCE" toggleGroup="$Exchanges" />
                   <RadioButton layoutX="518.0" layoutY="27.0" mnemonicParsing="false" text="HUOBI" toggleGroup="$Exchanges" />
                   <RadioButton layoutX="368.0" layoutY="27.0" mnemonicParsing="false" text="MEXC" toggleGroup="$Exchanges" />
-                  <Button fx:id="LoginButton" layoutX="479.0" layoutY="72.0" mnemonicParsing="false" onMouseClicked="#onLoginButtonClicked" prefHeight="62.0" prefWidth="78.0" text="API KEY&#10;   登録" />
+                  <Button fx:id="LoginButton" layoutX="479.0" layoutY="72.0" mnemonicParsing="false" onAction="#onLoginButtonClicked" prefHeight="62.0" prefWidth="78.0" text="API KEY&#10;   登録" />
                   <TextField alignment="CENTER" disable="true" layoutX="86.0" layoutY="76.0" prefHeight="54.0" prefWidth="324.0" />
                   <TabPane layoutY="198.0" prefHeight="457.0" prefWidth="675.0" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
@@ -36,14 +36,16 @@
                            <content>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="503.0" prefWidth="642.0">
                                  <children>
-                                    <Text fx:id="ExchangeStatus" layoutX="179.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="50.21630859375" />
-                                    <Text fx:id="TotalBalance" layoutX="179.0" layoutY="90.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="50.21630859375" />
-                                    <Text fx:id="TradeInLast24" layoutX="179.0" layoutY="135.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="50.21630859375" />
-                                    <Text fx:id="TotalProfit" layoutX="154.0" layoutY="320.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="50.21630859375" />
                                     <Label layoutX="14.0" layoutY="42.0" text="Exchange Status" />
                                     <Label layoutX="14.0" layoutY="76.0" prefHeight="18.0" prefWidth="74.0" text="Total Balance" />
-                                    <Label layoutX="14.0" layoutY="105.0" prefHeight="50.0" prefWidth="135.0" text="Trades in Last  24 hours" />
-                                    <Label layoutX="14.0" layoutY="306.0" prefHeight="18.0" prefWidth="74.0" text="Total Profit" />
+                                    <Label layoutX="14.0" layoutY="178.0" prefHeight="50.0" prefWidth="135.0" text="Total Trades" />
+                                    <Label layoutX="14.0" layoutY="306.0" prefHeight="18.0" prefWidth="78.0" text="Today's Profit" />
+                                    <Label fx:id="ExchangeStatus" layoutX="179.0" layoutY="42.0" prefHeight="17.0" prefWidth="63.0" text="Fetching..." />
+                                    <Label fx:id="TotalBalance" layoutX="179.0" layoutY="77.0" prefHeight="17.0" prefWidth="124.0" text="Fetching..." />
+                                    <Label fx:id="TotalTrades" layoutX="179.0" layoutY="195.0" prefHeight="17.0" prefWidth="63.0" text="Fetching..." />
+                                    <Label fx:id="TodayProfit" layoutX="179.0" layoutY="307.0" prefHeight="17.0" prefWidth="63.0" text="Fetching..." />
+                                    <Label fx:id="OpenOrders" layoutX="179.0" layoutY="160.0" prefHeight="17.0" prefWidth="60.0" text="Fetching..." />
+                                    <Label layoutX="14.0" layoutY="159.0" prefHeight="18.0" prefWidth="78.0" text="Open orders" />
                                  </children>
                               </AnchorPane>
                            </content>
@@ -99,12 +101,12 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="757.0" prefWidth="706.0">
                <children>
-                  <TextFlow fx:id="LogText" layoutY="26.0" prefHeight="630.0" prefWidth="675.0" textAlignment="RIGHT" />
                   <Label layoutX="14.0" layoutY="7.0" text="Logs" />
+                  <TextArea fx:id="LogBox" layoutY="32.0" prefHeight="626.0" prefWidth="675.0" />
                </children></AnchorPane>
         </items>
          <VBox.margin>
-            <Insets top="-15.0" />
+            <Insets />
          </VBox.margin>
       </SplitPane>
    </children>

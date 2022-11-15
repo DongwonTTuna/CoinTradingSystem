@@ -1,29 +1,23 @@
 package com.coinTradingSystem.UI;
 
+import com.coinTradingSystem.Main;
+import com.coinTradingSystem.SqlQuery;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
+import java.util.concurrent.ExecutionException;
+
 public class connectAPI {
+    @FXML
+    Button LoginButton;
+    @FXML
+    ToggleGroup Exchange;
+    @FXML
+    CheckBox toDatabase;
+    @FXML
+    TextField API_KEY;
+    @FXML
+    TextField SECRET_KEY;
 
-    @FXML
-    private ToggleGroup Exchange;
-    @FXML
-    private CheckBox toDatabase;
-    @FXML
-    private TextField API_KEY;
-    @FXML
-    private TextField SECRET_KEY;
-
-    @FXML
-    protected void onSaveButtonClicked(MouseEvent event){
-        RadioButton SelectedRB = (RadioButton)Exchange.getSelectedToggle();
-        System.out.println(SelectedRB.getText());
-        System.out.println(toDatabase.isSelected());
-        System.out.println(API_KEY.getText());
-        System.out.println(SECRET_KEY.getText());
-    }
 }

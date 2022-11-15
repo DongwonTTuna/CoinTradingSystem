@@ -4,16 +4,17 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.ArrayList;
 
 public class SqlQuery {
     
-    private final String connurl = "jdbc:postgresql://localhost:5432/TRADINGBOT";
-    private final String user = "postgres";
-    private final String password = "0790";
+    private static final String connurl = "jdbc:postgresql://localhost:5432/TRADINGBOT";
+    private static final String user = "postgres";
+    private static final String password = "0790";
 
-    private ArrayList<ArrayList<String>> getOrderQuery(String exchange){
+    private static ArrayList<ArrayList<String>> getOrderQuery(String exchange){
         ArrayList<ArrayList<String>> result = new ArrayList<>();
         try(Connection connection = DriverManager.getConnection(connurl,user,password);){
             PreparedStatement st = connection.prepareStatement("SELECT * FROM ORDERS WHERE exchange = ?");
@@ -40,7 +41,7 @@ public class SqlQuery {
     }
 
 
-    private int updateOrderQuery(String uuid, String exchange, short ordertype, String symbol, double checkprice, double targetprice, double amount){
+    private static int updateOrderQuery(String uuid, String exchange, short ordertype, String symbol, double checkprice, double targetprice, double amount){
         try(Connection connection = DriverManager.getConnection(connurl, user, password)){
             PreparedStatement st = connection.prepareStatement("UPDATE ORDERS SET (exchange,ordertype,symbol,checkprice,targetprice,amount) = (?,?,?,?,?,?) WHERE uuid = ?");
             st.setString(1, exchange);
@@ -61,7 +62,7 @@ public class SqlQuery {
     }
 
 
-    private int deleteOrderQuery(String uuid){
+    private static int deleteOrderQuery(String uuid){
         try(Connection connection = DriverManager.getConnection(connurl, user, password)){
             PreparedStatement st = connection.prepareStatement("DELETE FROM ORDERS WHERE uuid = ?");
             st.setString(1,uuid);
@@ -76,7 +77,7 @@ public class SqlQuery {
         return 0;
     }
 
-    private int insertOrderQuery(String exchange, short ordertype, String symbol, double checkprice, double targetprice, double amount){
+    private static int insertOrderQuery(String exchange, short ordertype, String symbol, double checkprice, double targetprice, double amount){
         try(Connection connection = DriverManager.getConnection(connurl, user, password)){
             PreparedStatement st = connection.prepareStatement("INSERT INTO ORDERS (uuid,exchange,ordertype,symbol,checkprice,targetprice,amount) VALUES (?,?,?,?,?,?,?)");
             String uuid = UUID.randomUUID().toString();
@@ -97,11 +98,12 @@ public class SqlQuery {
         return 0;
     }
 
-    private int updateAPIQuery(String exchange, String api_key, String secret_key){
+    private static int updateAPIQuery(String exchange, String api_key, String secret_key){
         try(Connection connection = DriverManager.getConnection(connurl, user, password)){
             PreparedStatement st = connection.prepareStatement("UPDATE APIKEYS SET (api_key,secret_key) = (?,?) WHERE exchange = ?");
-            String uuid = UUID.randomUUID().toString();
-            st.setString(1,uuid);
+            st.setString(1,api_key);
+            st.setString(2,secret_key);
+            st.setString(3,exchange);
             st.executeUpdate();
             st.close();
         } catch( SQLException e) {
@@ -111,24 +113,93 @@ public class SqlQuery {
         return 0;
     }
 
-    public ArrayList<ArrayList<String>> getOrderList(String exchange){
+    private static HashMap<String,HashMap<String,String>> getAPIQuery(){
+        HashMap<String,HashMap<String,String>> result = new HashMap<>();
+        try(Connection connection = DriverManager.getConnection(connurl, user, password)){
+            PreparedStatement st = connection.prepareStatement("SELECT * FROM APIKEYS");
+            ResultSet rs = st.executeQuery();
+            while( rs.next() ){
+                HashMap<String,String> tempHashMap = new HashMap<>();
+                tempHashMap.put("apikey",rs.getString("api_key"));
+                tempHashMap.put("secretkey",rs.getString("secret_key"));
+                result.put(rs.getString("exchange"),tempHashMap);
+            }
+            rs.close();
+            st.close();
+        } catch( SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
+    private static int getTradesNumQuery(String exchange) {
+        int result = -1;
+        try(Connection connection = DriverManager.getConnection(connurl, user, password)) {
+            PreparedStatement st = connection.prepareStatement("SELECT num FROM TotalTradesNPnL where exchange = ?");
+            st.setString(1,exchange);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()){
+                return rs.getInt("num");
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private static void increaseTradesNumQuery(String exchange){
+        try(Connection connection = DriverManager.getConnection(connurl, user, password)) {
+            PreparedStatement st = connection.prepareStatement("UPDATE TotalTradesNPnL SET num = num + 1 WHERE exchange = ?");
+            st.setString(1,exchange);
+            st.executeUpdate();
+            st.close();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    private static void updatePBalQuery(String exchange, int num){
+        try(Connection connection = DriverManager.getConnection(connurl, user, password)) {
+            PreparedStatement st = connection.prepareStatement("UPDATE TotalTradesNPnL SET Pbal = ? WHERE exchange = ?");
+            st.setInt(1,num);
+            st.setString(2,exchange);
+            st.executeUpdate();
+            st.close();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static ArrayList<ArrayList<String>> getOrderList(String exchange){
         return getOrderQuery(exchange);
     }
 
-    public int updateOrder(String uuid, String exchange, short ordertype, String symbol, double checkprice, double targetprice, double amount){
+    public static int updateOrder(String uuid, String exchange, short ordertype, String symbol, double checkprice, double targetprice, double amount){
         return updateOrderQuery(uuid, exchange, ordertype, symbol, checkprice, targetprice, amount);
     }
 
-    public int deleteOrder(String uuid){
+    public static int deleteOrder(String uuid){
         return deleteOrderQuery(uuid);
     }
 
-    public int insertOrder(String exchange, short ordertype, String symbol, double checkprice, double targetprice, double amount){
+    public static int insertOrder(String exchange, short ordertype, String symbol, double checkprice, double targetprice, double amount){
         return insertOrderQuery(exchange, ordertype, symbol, checkprice, targetprice, amount);
     }
 
-    public int updateAPI(String exchange, String api_key, String secret_key){
+    public static int updateAPI(String exchange, String api_key, String secret_key){
         return updateAPIQuery(exchange,api_key,secret_key);
     }
-
+    public static HashMap<String,HashMap<String,String>> getAPI(){
+        return getAPIQuery();
+    }
+    public static int getTradesNum(String exchange){
+        return getTradesNumQuery(exchange);
+    }
+    public static void increaseTradesNum(String exchange){
+        increaseTradesNumQuery(exchange);
+    }
+    public static void updatePBal(String exchange, int num){
+        updatePBalQuery(exchange, num);
+    }
 }

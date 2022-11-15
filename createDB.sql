@@ -13,8 +13,8 @@ CREATE TABLE ORDERS (
     targetprice NUMERIC NOT NULL,
     amount NUMERIC NOT NULL
 );
-DROP TABLE IF EXISTS APIKEYS;
 
+DROP TABLE IF EXISTS APIKEYS;
 CREATE TABLE APIKEYS(
     exchange TEXT NOT NULL PRIMARY KEY,
     api_key TEXT,
@@ -25,3 +25,31 @@ INSERT INTO APIKEYS (exchange,api_key,secret_key) VALUES ('BINANCE',null,null);
 INSERT INTO APIKEYS (exchange,api_key,secret_key) VALUES ('GATEIO',null,null);
 INSERT INTO APIKEYS (exchange,api_key,secret_key) VALUES ('MEXC',null,null);
 INSERT INTO APIKEYS (exchange,api_key,secret_key) VALUES ('HUOBI',null,null);
+
+DROP TABLE IF EXISTS TotalTradesNPnL;
+CREATE TABLE TotalTradesNPnL(
+    exchange TEXT NOT NULL PRIMARY KEY,
+    num      INTEGER NOT NULL,
+    Pbal INTEGER NOT NULL,
+    Tbal INTEGER NOT NULL,
+);
+
+
+DROP SCHEMA IF EXISTS B CASCADE;
+CREATE SCHEMA IF NOT EXISTS B;
+
+DO $$
+DECLARE
+  exc text;
+BEGIN
+  FOR exc IN
+  SELECT
+    exchange
+  FROM
+    APIKEYS LOOP
+      EXECUTE 'CREATE TABLE IF NOT EXISTS B.' || exc || 'BAL(symbol text NOT NULL, amount numeric not null, freeAmount numeric NOT NULL, freezeAmount numeric NOT NULL, withdrawable boolean NOT NULL, walletAddress text NOT NULL)';
+      EXECUTE 'INSERT INTO TotalTrades (exchange, num, Pbal, Tbal) VALUES ('''|| exc ||''',0,0,0)';
+    END LOOP;
+END
+$$;
+
