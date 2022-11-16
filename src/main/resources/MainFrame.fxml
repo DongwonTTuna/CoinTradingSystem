@@ -20,14 +20,14 @@
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <RadioButton layoutX="213.0" layoutY="27.0" mnemonicParsing="false" text="GATEIO">
+                  <RadioButton layoutX="213.0" layoutY="27.0" mnemonicParsing="false" onAction="#onExchangeChanged" text="GATEIO">
                      <toggleGroup>
                         <ToggleGroup fx:id="Exchanges" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton layoutX="47.0" layoutY="27.0" mnemonicParsing="false" selected="true" text="BINANCE" toggleGroup="$Exchanges" />
-                  <RadioButton layoutX="518.0" layoutY="27.0" mnemonicParsing="false" text="HUOBI" toggleGroup="$Exchanges" />
-                  <RadioButton layoutX="368.0" layoutY="27.0" mnemonicParsing="false" text="MEXC" toggleGroup="$Exchanges" />
+                  <RadioButton layoutX="47.0" layoutY="27.0" mnemonicParsing="false" onAction="#onExchangeChanged" selected="true" text="BINANCE" toggleGroup="$Exchanges" />
+                  <RadioButton layoutX="518.0" layoutY="27.0" mnemonicParsing="false" onAction="#onExchangeChanged" text="HUOBI" toggleGroup="$Exchanges" />
+                  <RadioButton layoutX="368.0" layoutY="27.0" mnemonicParsing="false" onAction="#onExchangeChanged" text="MEXC" toggleGroup="$Exchanges" />
                   <Button fx:id="LoginButton" layoutX="479.0" layoutY="72.0" mnemonicParsing="false" onAction="#onLoginButtonClicked" prefHeight="62.0" prefWidth="78.0" text="API KEY&#10;   登録" />
                   <TextField alignment="CENTER" disable="true" layoutX="86.0" layoutY="76.0" prefHeight="54.0" prefWidth="324.0" />
                   <TabPane layoutY="198.0" prefHeight="457.0" prefWidth="675.0" tabClosingPolicy="UNAVAILABLE">
@@ -37,32 +37,34 @@
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="503.0" prefWidth="642.0">
                                  <children>
                                     <Label layoutX="14.0" layoutY="42.0" text="Exchange Status" />
-                                    <Label layoutX="14.0" layoutY="76.0" prefHeight="18.0" prefWidth="74.0" text="Total Balance" />
+                                    <Label layoutX="14.0" layoutY="76.0" prefHeight="18.0" prefWidth="122.0" text="Total Balance (in BTC)" />
                                     <Label layoutX="14.0" layoutY="178.0" prefHeight="50.0" prefWidth="135.0" text="Total Trades" />
                                     <Label layoutX="14.0" layoutY="306.0" prefHeight="18.0" prefWidth="78.0" text="Today's Profit" />
                                     <Label fx:id="ExchangeStatus" layoutX="179.0" layoutY="42.0" prefHeight="17.0" prefWidth="63.0" text="Fetching..." />
                                     <Label fx:id="TotalBalance" layoutX="179.0" layoutY="77.0" prefHeight="17.0" prefWidth="124.0" text="Fetching..." />
                                     <Label fx:id="TotalTrades" layoutX="179.0" layoutY="195.0" prefHeight="17.0" prefWidth="63.0" text="Fetching..." />
-                                    <Label fx:id="TodayProfit" layoutX="179.0" layoutY="307.0" prefHeight="17.0" prefWidth="63.0" text="Fetching..." />
                                     <Label fx:id="OpenOrders" layoutX="179.0" layoutY="160.0" prefHeight="17.0" prefWidth="60.0" text="Fetching..." />
                                     <Label layoutX="14.0" layoutY="159.0" prefHeight="18.0" prefWidth="78.0" text="Open orders" />
+                                    <Label fx:id="TodayProfit" layoutX="177.0" layoutY="307.0" prefHeight="17.0" prefWidth="124.0" text="Fetching..." />
                                  </children>
                               </AnchorPane>
                            </content>
                         </Tab>
-                      <Tab closable="false" text="Balances">
+                      <Tab closable="false" onSelectionChanged="#onBalanceSelected" text="Balances">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
-                                    <TableView fx:id="BalanceTable" layoutX="4.0" layoutY="3.0" pickOnBounds="false" prefHeight="443.0" prefWidth="675.0">
+                                    <TableView fx:id="BalanceTable" layoutX="4.0" layoutY="33.0" pickOnBounds="false" prefHeight="412.0" prefWidth="675.0" style="-fx-alignment: CENTER;">
                                       <columns>
-                                        <TableColumn prefWidth="57.0" text="Symbol" />
-                                        <TableColumn prefWidth="154.0" text="Amount" />
-                                          <TableColumn minWidth="0.0" prefWidth="164.0" text="Freeze" />
-                                          <TableColumn prefWidth="102.0" text="Withdrawable" />
-                                          <TableColumn prefWidth="211.0" text="WalletAddress" />
+                                        <TableColumn fx:id="BalanceSymbol" prefWidth="69.0" style="-fx-alignment: CENTER;" text="Symbol" />
+                                        <TableColumn fx:id="BalanceAmount" prefWidth="156.0" style="-fx-alignment: CENTER_RIGHT;" text="Amount" />
+                                          <TableColumn fx:id="BalanceFreeze" minWidth="0.0" prefWidth="150.0" style="-fx-alignment: CENTER_RIGHT;" text="Freeze" />
+                                          <TableColumn fx:id="BalanceWithdrawable" prefWidth="85.0" style="-fx-alignment: CENTER;" text="Withdrawable" />
+                                          <TableColumn fx:id="BalanceWorthInUSD" prefWidth="228.0" style="-fx-alignment: CENTER;" text="Worth In USDT" />
                                       </columns>
                                     </TableView>
+                                    <Label layoutX="468.0" layoutY="8.0" prefHeight="18.0" prefWidth="101.0" text="Total Balance :  $  " />
+                                    <Label fx:id="TotalBalanceInUSD" layoutX="569.0" layoutY="8.0" prefHeight="18.0" prefWidth="104.0" />
                                  </children>
                               </AnchorPane>
                         </content>
@@ -74,12 +76,15 @@
                                     <TableView fx:id="OrderTable" layoutX="4.0" layoutY="33.0" prefHeight="412.0" prefWidth="675.0">
                                       <columns>
                                           <TableColumn prefWidth="106.0" text="Order UUID" />
-                                        <TableColumn minWidth="0.0" prefWidth="83.0" text="Symbol" />
-                                        <TableColumn prefWidth="79.0" text="OrderType" />
-                                          <TableColumn prefWidth="100.0" text="TargetPrice" />
-                                          <TableColumn prefWidth="99.0" text="CheckPrice" />
-                                          <TableColumn prefWidth="168.0" text="Amount" />
+                                        <TableColumn minWidth="0.0" prefWidth="83.0" style="-fx-alignment: CENTER;" text="Symbol" />
+                                        <TableColumn prefWidth="79.0" style="-fx-alignment: CENTER;" text="OrderType" />
+                                          <TableColumn prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="TargetPrice" />
+                                          <TableColumn prefWidth="99.0" style="-fx-alignment: CENTER_RIGHT;" text="CheckPrice" />
+                                          <TableColumn prefWidth="168.0" style="-fx-alignment: CENTER_RIGHT;" text="Amount" />
                                       </columns>
+                                       <rotationAxis>
+                                          <Point3D />
+                                       </rotationAxis>
                                     </TableView>
                                     <Group layoutY="2.0">
                                        <children>

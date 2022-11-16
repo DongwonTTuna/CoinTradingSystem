@@ -8,7 +8,7 @@ module com.example.cointradingsystem {
     requires org.json;
     requires commons.codec;
     requires okhttp3;
-    requires binance.api.client;
+    requires awaitility;
 
     opens com.coinTradingSystem to javafx.fxml;
     exports com.coinTradingSystem;

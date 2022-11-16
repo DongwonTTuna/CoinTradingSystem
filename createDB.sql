@@ -30,8 +30,8 @@ DROP TABLE IF EXISTS TotalTradesNPnL;
 CREATE TABLE TotalTradesNPnL(
     exchange TEXT NOT NULL PRIMARY KEY,
     num      INTEGER NOT NULL,
-    Pbal INTEGER NOT NULL,
-    Tbal INTEGER NOT NULL,
+    Pbal     NUMERIC NOT NULL,
+    Tbal     NUMERIC NOT NULL
 );
 
 
@@ -48,7 +48,7 @@ BEGIN
   FROM
     APIKEYS LOOP
       EXECUTE 'CREATE TABLE IF NOT EXISTS B.' || exc || 'BAL(symbol text NOT NULL, amount numeric not null, freeAmount numeric NOT NULL, freezeAmount numeric NOT NULL, withdrawable boolean NOT NULL, walletAddress text NOT NULL)';
-      EXECUTE 'INSERT INTO TotalTrades (exchange, num, Pbal, Tbal) VALUES ('''|| exc ||''',0,0,0)';
+      EXECUTE 'INSERT INTO TotalTradesNPnL (exchange, num, Pbal, Tbal) VALUES ('''|| exc ||''',0,0,0)';
     END LOOP;
 END
 $$;

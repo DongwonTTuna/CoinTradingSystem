@@ -159,16 +159,30 @@ public class SqlQuery {
         }
     }
 
-    private static void updatePBalQuery(String exchange, int num){
+    private static void updatePBalQuery(String exchange, double num){
         try(Connection connection = DriverManager.getConnection(connurl, user, password)) {
             PreparedStatement st = connection.prepareStatement("UPDATE TotalTradesNPnL SET Pbal = ? WHERE exchange = ?");
-            st.setInt(1,num);
+            st.setDouble(1,num);
             st.setString(2,exchange);
             st.executeUpdate();
             st.close();
         } catch (SQLException e){
             e.printStackTrace();
         }
+    }
+    private static double getPBalQuery(String exchange){
+        try(Connection connection = DriverManager.getConnection(connurl, user, password)) {
+
+            PreparedStatement st = connection.prepareStatement("SELECT Pbal FROM TotalTradesNPnL where exchange = ?");
+            st.setString(1,exchange);
+            ResultSet rs = st.executeQuery();
+
+            rs.next();
+            return rs.getDouble("Pbal");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return -1.0;
     }
 
     public static ArrayList<ArrayList<String>> getOrderList(String exchange){
@@ -199,7 +213,12 @@ public class SqlQuery {
     public static void increaseTradesNum(String exchange){
         increaseTradesNumQuery(exchange);
     }
-    public static void updatePBal(String exchange, int num){
+    public static void updatePBal(String exchange, double num){
         updatePBalQuery(exchange, num);
     }
+
+    public static double getPbal(String exchange){
+        return getPBalQuery(exchange);
+    }
+
 }
