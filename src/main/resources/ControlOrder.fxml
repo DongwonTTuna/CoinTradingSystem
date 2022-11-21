@@ -1,14 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
+<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.coinTradingSystem.UI.ControlOrder"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coinTradingSystem.UI.ControlOrder.ControlOrder">
+   <children>
+      <Button fx:id="Submit" layoutX="218.0" layoutY="339.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="137.0" text="確認" />
+      <Label layoutX="38.0" layoutY="37.0" prefHeight="17.0" prefWidth="71.0" text="UUID" />
+      <Label fx:id="UUIDLabel" layoutX="124.0" layoutY="37.0" prefHeight="17.0" prefWidth="472.0" text="追加時に自動に生成されます" />
+      <Label layoutX="38.0" layoutY="87.0" text="Exchange" />
+      <Label layoutX="35.0" layoutY="143.0" text="OrderType" />
+      <RadioButton fx:id="OrderTypeTakeProfit" layoutX="451.0" layoutY="179.0" mnemonicParsing="false" text="利益補填">
+         <toggleGroup>
+            <ToggleGroup fx:id="OrderType" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="OrderTypeLossCut" layoutX="331.0" layoutY="179.0" mnemonicParsing="false" text="損切" toggleGroup="$OrderType" />
+      <RadioButton fx:id="OrderTypeSell" layoutX="202.0" layoutY="179.0" mnemonicParsing="false" text="売却" toggleGroup="$OrderType" />
+      <RadioButton fx:id="OrderTypeBuy" layoutX="74.0" layoutY="179.0" mnemonicParsing="false" text="購入" toggleGroup="$OrderType" />
+      <Label layoutX="38.0" layoutY="241.0" text="シンボル" />
+      <Label layoutX="38.0" layoutY="291.0" text="数量" />
+      <TextField fx:id="Amount" layoutX="99.0" layoutY="286.0" />
+      <TextField fx:id="TriggerPrice" layoutX="395.0" layoutY="286.0" />
+      <Label layoutX="320.0" layoutY="291.0" text="トリガ価格" />
+      <Label layoutX="320.0" layoutY="241.0" text="目標価格" />
+      <TextField fx:id="TargetPrice" layoutX="395.0" layoutY="236.0" />
+      <ChoiceBox fx:id="SymbolSelectTab" layoutX="99.0" layoutY="236.0" prefHeight="27.0" prefWidth="161.0" />
+      <Label fx:id="ExchangeLabel" layoutX="124.0" layoutY="87.0" prefHeight="17.0" prefWidth="137.0" />
+   </children>
 </AnchorPane>

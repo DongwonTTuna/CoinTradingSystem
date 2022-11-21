@@ -22,12 +22,11 @@ public class SqlQuery {
             ResultSet rs = st.executeQuery();
             while( rs.next() ){
                 ArrayList<String> tempList = new ArrayList<>();
-                tempList.add(rs.getString("uuid")); 
-                tempList.add(rs.getString("exchange"));
-                tempList.add("" + rs.getInt("ordertype"));
+                tempList.add(rs.getString("uuid"));
                 tempList.add(rs.getString("symbol"));
-                tempList.add("" + rs.getDouble("checkprice"));
+                tempList.add("" + rs.getShort("ordertype"));
                 tempList.add("" + rs.getDouble("targetprice"));
+                tempList.add("" + rs.getDouble("checkprice"));
                 tempList.add("" + rs.getDouble("amount"));
                 result.add(tempList);
             }
@@ -62,7 +61,7 @@ public class SqlQuery {
     }
 
 
-    private static int deleteOrderQuery(String uuid){
+    private static int removeOrderQuery(String uuid){
         try(Connection connection = DriverManager.getConnection(connurl, user, password)){
             PreparedStatement st = connection.prepareStatement("DELETE FROM ORDERS WHERE uuid = ?");
             st.setString(1,uuid);
@@ -75,6 +74,15 @@ public class SqlQuery {
 
 
         return 0;
+    }
+    private static void removeAllOrderQuery(){
+        try(Connection connection = DriverManager.getConnection(connurl, user, password)){
+            PreparedStatement st = connection.prepareStatement("DELETE FROM ORDERS");
+            st.executeUpdate();
+            st.close();
+        } catch( SQLException e){
+            e.printStackTrace();
+        }
     }
 
     private static int insertOrderQuery(String exchange, short ordertype, String symbol, double checkprice, double targetprice, double amount){
@@ -193,11 +201,11 @@ public class SqlQuery {
         return updateOrderQuery(uuid, exchange, ordertype, symbol, checkprice, targetprice, amount);
     }
 
-    public static int deleteOrder(String uuid){
-        return deleteOrderQuery(uuid);
+    public static int removeOrder(String uuid){
+        return removeOrderQuery(uuid);
     }
 
-    public static int insertOrder(String exchange, short ordertype, String symbol, double checkprice, double targetprice, double amount){
+    public static int addOrder(String exchange, short ordertype, String symbol, double checkprice, double targetprice, double amount){
         return insertOrderQuery(exchange, ordertype, symbol, checkprice, targetprice, amount);
     }
 
@@ -216,7 +224,9 @@ public class SqlQuery {
     public static void updatePBal(String exchange, double num){
         updatePBalQuery(exchange, num);
     }
-
+    public static void removeAllOrders(){
+        removeAllOrderQuery();
+    }
     public static double getPbal(String exchange){
         return getPBalQuery(exchange);
     }

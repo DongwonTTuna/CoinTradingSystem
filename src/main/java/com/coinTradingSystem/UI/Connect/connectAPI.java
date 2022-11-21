@@ -1,4 +1,4 @@
-package com.coinTradingSystem.UI;
+package com.coinTradingSystem.UI.Connect;
 
 import com.coinTradingSystem.Main;
 import com.coinTradingSystem.SqlQuery;
@@ -10,14 +10,14 @@ import java.util.concurrent.ExecutionException;
 
 public class connectAPI {
     @FXML
-    Button LoginButton;
+    public Button LoginButton;
     @FXML
-    ToggleGroup Exchange;
+    public ToggleGroup Exchange;
     @FXML
-    CheckBox toDatabase;
+    public CheckBox toDatabase;
     @FXML
-    TextField API_KEY;
+    public TextField API_KEY;
     @FXML
-    TextField SECRET_KEY;
+    public TextField SECRET_KEY;
 
 }

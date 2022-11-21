@@ -1,118 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox minHeight="700.0" minWidth="1400.0" prefHeight="700.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coinTradingSystem.UI.MainFrame">
+<VBox minHeight="700.0" minWidth="1400.0" prefHeight="700.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.coinTradingSystem.UI.MainFrame.MainFrame">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
    <children>
-      <SplitPane dividerPositions="0.5" prefHeight="681.0" prefWidth="1360.0">
-        <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-               <children>
-                  <RadioButton layoutX="213.0" layoutY="27.0" mnemonicParsing="false" onAction="#onExchangeChanged" text="GATEIO">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="Exchanges" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton layoutX="47.0" layoutY="27.0" mnemonicParsing="false" onAction="#onExchangeChanged" selected="true" text="BINANCE" toggleGroup="$Exchanges" />
-                  <RadioButton layoutX="518.0" layoutY="27.0" mnemonicParsing="false" onAction="#onExchangeChanged" text="HUOBI" toggleGroup="$Exchanges" />
-                  <RadioButton layoutX="368.0" layoutY="27.0" mnemonicParsing="false" onAction="#onExchangeChanged" text="MEXC" toggleGroup="$Exchanges" />
-                  <Button fx:id="LoginButton" layoutX="479.0" layoutY="72.0" mnemonicParsing="false" onAction="#onLoginButtonClicked" prefHeight="62.0" prefWidth="78.0" text="API KEY&#10;   登録" />
-                  <TextField alignment="CENTER" disable="true" layoutX="86.0" layoutY="76.0" prefHeight="54.0" prefWidth="324.0" />
-                  <TabPane layoutY="198.0" prefHeight="457.0" prefWidth="675.0" tabClosingPolicy="UNAVAILABLE">
-                    <tabs>
-                        <Tab closable="false" text="Status">
-                           <content>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="503.0" prefWidth="642.0">
-                                 <children>
-                                    <Label layoutX="14.0" layoutY="42.0" text="Exchange Status" />
-                                    <Label layoutX="14.0" layoutY="76.0" prefHeight="18.0" prefWidth="122.0" text="Total Balance (in BTC)" />
-                                    <Label layoutX="14.0" layoutY="178.0" prefHeight="50.0" prefWidth="135.0" text="Total Trades" />
-                                    <Label layoutX="14.0" layoutY="306.0" prefHeight="18.0" prefWidth="78.0" text="Today's Profit" />
-                                    <Label fx:id="ExchangeStatus" layoutX="179.0" layoutY="42.0" prefHeight="17.0" prefWidth="63.0" text="Fetching..." />
-                                    <Label fx:id="TotalBalance" layoutX="179.0" layoutY="77.0" prefHeight="17.0" prefWidth="124.0" text="Fetching..." />
-                                    <Label fx:id="TotalTrades" layoutX="179.0" layoutY="195.0" prefHeight="17.0" prefWidth="63.0" text="Fetching..." />
-                                    <Label fx:id="OpenOrders" layoutX="179.0" layoutY="160.0" prefHeight="17.0" prefWidth="60.0" text="Fetching..." />
-                                    <Label layoutX="14.0" layoutY="159.0" prefHeight="18.0" prefWidth="78.0" text="Open orders" />
-                                    <Label fx:id="TodayProfit" layoutX="177.0" layoutY="307.0" prefHeight="17.0" prefWidth="124.0" text="Fetching..." />
-                                 </children>
-                              </AnchorPane>
-                           </content>
-                        </Tab>
-                      <Tab closable="false" onSelectionChanged="#onBalanceSelected" text="Balances">
-                        <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                 <children>
-                                    <TableView fx:id="BalanceTable" layoutX="4.0" layoutY="33.0" pickOnBounds="false" prefHeight="412.0" prefWidth="675.0" style="-fx-alignment: CENTER;">
-                                      <columns>
-                                        <TableColumn fx:id="BalanceSymbol" prefWidth="69.0" style="-fx-alignment: CENTER;" text="Symbol" />
-                                        <TableColumn fx:id="BalanceAmount" prefWidth="156.0" style="-fx-alignment: CENTER_RIGHT;" text="Amount" />
-                                          <TableColumn fx:id="BalanceFreeze" minWidth="0.0" prefWidth="150.0" style="-fx-alignment: CENTER_RIGHT;" text="Freeze" />
-                                          <TableColumn fx:id="BalanceWithdrawable" prefWidth="85.0" style="-fx-alignment: CENTER;" text="Withdrawable" />
-                                          <TableColumn fx:id="BalanceWorthInUSD" prefWidth="228.0" style="-fx-alignment: CENTER;" text="Worth In USDT" />
-                                      </columns>
-                                    </TableView>
-                                    <Label layoutX="468.0" layoutY="8.0" prefHeight="18.0" prefWidth="101.0" text="Total Balance :  $  " />
-                                    <Label fx:id="TotalBalanceInUSD" layoutX="569.0" layoutY="8.0" prefHeight="18.0" prefWidth="104.0" />
-                                 </children>
-                              </AnchorPane>
-                        </content>
-                      </Tab>
-                      <Tab closable="false" text="Orders">
-                        <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                 <children>
-                                    <TableView fx:id="OrderTable" layoutX="4.0" layoutY="33.0" prefHeight="412.0" prefWidth="675.0">
-                                      <columns>
-                                          <TableColumn prefWidth="106.0" text="Order UUID" />
-                                        <TableColumn minWidth="0.0" prefWidth="83.0" style="-fx-alignment: CENTER;" text="Symbol" />
-                                        <TableColumn prefWidth="79.0" style="-fx-alignment: CENTER;" text="OrderType" />
-                                          <TableColumn prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="TargetPrice" />
-                                          <TableColumn prefWidth="99.0" style="-fx-alignment: CENTER_RIGHT;" text="CheckPrice" />
-                                          <TableColumn prefWidth="168.0" style="-fx-alignment: CENTER_RIGHT;" text="Amount" />
-                                      </columns>
-                                       <rotationAxis>
-                                          <Point3D />
-                                       </rotationAxis>
-                                    </TableView>
-                                    <Group layoutY="2.0">
-                                       <children>
-                                          <Button fx:id="RemoveOne" layoutX="536.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#onRemoveButtonClicked" text="削除" />
-                                          <Button fx:id="AddOrder" layoutX="482.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#onAddButtonClicked" text="追加" />
-                                          <Button fx:id="RemoveAll" layoutX="591.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#onRemoveAllButtonClicked" prefHeight="27.0" prefWidth="78.0" text="一括削除" />
-                                       </children>
-                                    </Group>
-                                 </children>
-                              </AnchorPane>
-                        </content>
-                      </Tab>
-                    </tabs>
-                  </TabPane>
-               </children>
-               <padding>
-                  <Insets top="-10.0" />
-               </padding>
-            </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="757.0" prefWidth="706.0">
-               <children>
-                  <Label layoutX="14.0" layoutY="7.0" text="Logs" />
-                  <TextArea fx:id="LogBox" layoutY="32.0" prefHeight="626.0" prefWidth="675.0" />
-               </children></AnchorPane>
-        </items>
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
-      </SplitPane>
+       <SplitPane fx:id="Splitpane" dividerPositions="0.5" prefHeight="681.0" prefWidth="1360.0">
+           <VBox.margin>
+               <Insets />
+           </VBox.margin>
+          <items>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                  <padding>
+                      <Insets top="-10.0" />
+                  </padding>
+                 <children>
+                     <RadioButton fx:id="ExchangeG" layoutX="298.0" layoutY="31.0" mnemonicParsing="false" text="GATEIO">
+                         <toggleGroup>
+                             <ToggleGroup fx:id="Exchanges" />
+                         </toggleGroup>
+                     </RadioButton>
+                     <RadioButton fx:id="ExchangeB" layoutX="108.0" layoutY="31.0" mnemonicParsing="false" selected="true" text="BINANCE" toggleGroup="$Exchanges" />
+                     <RadioButton fx:id="ExchangeM" layoutX="483.0" layoutY="31.0" mnemonicParsing="false" text="UPBIT" toggleGroup="$Exchanges" />
+                     <Button fx:id="LoginButton" layoutX="479.0" layoutY="72.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="78.0" text="API KEY&#10;   登録" />
+                     <TextField fx:id="ConnectionLog" alignment="CENTER" disable="true" layoutX="86.0" layoutY="76.0" prefHeight="54.0" prefWidth="324.0" style="-fx-opacity: 1;" />
+                     <TabPane fx:id="InfoTab" layoutY="198.0" prefHeight="457.0" prefWidth="675.0" tabClosingPolicy="UNAVAILABLE">
+                        <tabs>
+                            <Tab fx:id="StatusTab" closable="false" text="Status">
+                               <content>
+                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="503.0" prefWidth="642.0">
+                                      <children>
+                                          <Label layoutX="14.0" layoutY="42.0" text="Exchange Status" />
+                                          <Label layoutX="14.0" layoutY="76.0" prefHeight="18.0" prefWidth="122.0" text="Total Balance" />
+                                          <Label layoutX="14.0" layoutY="178.0" prefHeight="50.0" prefWidth="135.0" text="Total Trades" />
+                                          <Label layoutX="14.0" layoutY="306.0" prefHeight="18.0" prefWidth="78.0" text="Today's Profit" />
+                                          <Label fx:id="ExchangeStatus" layoutX="179.0" layoutY="42.0" prefHeight="17.0" prefWidth="63.0" text="Fetching..." />
+                                          <Label fx:id="TotalBalance" layoutX="179.0" layoutY="77.0" prefHeight="17.0" prefWidth="124.0" text="Fetching..." />
+                                          <Label fx:id="TotalTrades" layoutX="179.0" layoutY="195.0" prefHeight="17.0" prefWidth="63.0" text="Fetching..." />
+                                          <Label fx:id="OpenOrders" layoutX="179.0" layoutY="160.0" prefHeight="17.0" prefWidth="60.0" text="Fetching..." />
+                                          <Label layoutX="14.0" layoutY="159.0" prefHeight="18.0" prefWidth="78.0" text="Open orders" />
+                                          <Label fx:id="TodayProfit" layoutX="177.0" layoutY="307.0" prefHeight="17.0" prefWidth="124.0" text="Fetching..." />
+                                      </children>
+                                   </AnchorPane>
+                               </content>
+                            </Tab>
+                            <Tab fx:id="BalanceTab" closable="false" text="Balances">
+                               <content>
+                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                      <children>
+                                          <TableView fx:id="BalanceTable" layoutX="4.0" layoutY="33.0" pickOnBounds="false" prefHeight="412.0" prefWidth="675.0" style="-fx-alignment: CENTER;">
+                                              <columns>
+                                                  <TableColumn fx:id="BalanceSymbol" prefWidth="69.0" style="-fx-alignment: CENTER;" text="Symbol" />
+                                                  <TableColumn fx:id="BalanceAmount" prefWidth="156.0" style="-fx-alignment: CENTER_RIGHT;" text="Amount" />
+                                                  <TableColumn fx:id="BalanceFreeze" minWidth="0.0" prefWidth="150.0" style="-fx-alignment: CENTER_RIGHT;" text="Freeze" />
+                                                  <TableColumn fx:id="BalanceWithdrawable" prefWidth="85.0" style="-fx-alignment: CENTER;" text="Withdrawable" />
+                                                  <TableColumn fx:id="BalanceWorthInUSD" prefWidth="228.0" style="-fx-alignment: CENTER;" text="Worth In USDT" />
+                                              </columns>
+                                          </TableView>
+                                          <Label layoutX="468.0" layoutY="8.0" prefHeight="18.0" prefWidth="101.0" text="Total Balance :  $  " />
+                                          <Label fx:id="TotalBalanceInUSD" layoutX="569.0" layoutY="8.0" prefHeight="18.0" prefWidth="104.0" />
+                                      </children>
+                                   </AnchorPane>
+                               </content>
+                            </Tab>
+                            <Tab fx:id="OrderTab" closable="false" text="Orders">
+                               <content>
+                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                      <children>
+                                          <TableView fx:id="OrderTable" layoutX="4.0" layoutY="33.0" prefHeight="412.0" prefWidth="675.0">
+                                              <columns>
+                                                  <TableColumn fx:id="OrderUUID" prefWidth="198.0" text="Order UUID" />
+                                                  <TableColumn fx:id="OrderSymbol" minWidth="0.0" prefWidth="77.0" style="-fx-alignment: CENTER;" text="Symbol" />
+                                                  <TableColumn fx:id="OrderOrderType" prefWidth="86.0" style="-fx-alignment: CENTER;" text="OrderType" />
+                                                  <TableColumn fx:id="OrderTargetPrice" prefWidth="107.0" style="-fx-alignment: CENTER_RIGHT;" text="TargetPrice" />
+                                                  <TableColumn fx:id="OrderTriggerPrice" prefWidth="109.0" style="-fx-alignment: CENTER_RIGHT;" text="TriggerPrice" />
+                                                  <TableColumn fx:id="OrderAmount" prefWidth="95.0" style="-fx-alignment: CENTER_RIGHT;" text="Amount" />
+                                              </columns>
+                                              <rotationAxis>
+                                                  <Point3D />
+                                              </rotationAxis>
+                                          </TableView>
+                                          <Group layoutY="2.0">
+                                             <children>
+                                                 <Button fx:id="RemoveOne" layoutX="536.0" layoutY="1.0" mnemonicParsing="false" text="削除" />
+                                                 <Button fx:id="AddOrder" layoutX="482.0" layoutY="1.0" mnemonicParsing="false" text="追加" />
+                                                 <Button fx:id="RemoveAll" layoutX="591.0" layoutY="1.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="78.0" text="一括削除" />
+                                             </children>
+                                          </Group>
+                                      </children>
+                                   </AnchorPane>
+                               </content>
+                            </Tab>
+                        </tabs>
+                     </TabPane>
+                 </children>
+              </AnchorPane>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="757.0" prefWidth="706.0">
+                 <children>
+                     <Label layoutX="14.0" layoutY="7.0" text="Logs" />
+                  <VBox fx:id="LogBox" alignment="BOTTOM_RIGHT" layoutY="35.0" prefHeight="624.0" prefWidth="676.0" style="-fx-background-color: #ffffff;" />
+                 </children>
+              </AnchorPane>
+          </items>
+       </SplitPane>
    </children>
 </VBox>

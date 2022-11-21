@@ -19,7 +19,8 @@ import java.util.Objects;
 public class Main extends Application{
 
     public static String CurrentExchange;
-
+    public static String CurrentTabText;
+    public static boolean isExchangeLoaded = false;
     private static HashMap<String,HashMap<String,String>> API;
     @Override
     public void start(Stage pStage) throws IOException {
@@ -39,7 +40,6 @@ public class Main extends Application{
     }
 
     public static void setAPI(String exchange, String apikey, String secretkey){
-        CurrentExchange = exchange;
         HashMap<String,String> tempHashmap = new HashMap<>();
         tempHashmap.put("apikey",apikey);
         tempHashmap.put("secretkey",secretkey);
@@ -55,6 +55,10 @@ public class Main extends Application{
     public static void main(String[] args) {
         getAPIfromDatabase();
         CurrentExchange = "BINANCE";
+        if (API.get(CurrentExchange).get("apikey") != null){
+            isExchangeLoaded = true;
+        }
+
         launch();
         //sql.insertOrder("BINANCE", (short)0, "BTCUSDT", 0, 20000.0, 12.0);
         //sql.updateOrder("4bafb6ff-b26a-48dd-b114-85abe9371e47", "FTX", (short)0, "ETHUSD", 0, 0, 0);

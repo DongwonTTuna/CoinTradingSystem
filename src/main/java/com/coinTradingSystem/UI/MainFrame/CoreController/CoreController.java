@@ -1,0 +1,33 @@
+package com.coinTradingSystem.UI.MainFrame.CoreController;
+
+import com.coinTradingSystem.UI.MainFrame.CoreController.EventHandler.CallBackFunctions;
+import com.coinTradingSystem.UI.MainFrame.CoreController.EventHandler.EventHandler;
+import com.coinTradingSystem.UI.MainFrame.CoreController.ExchangeHandler.ExchangeHandler;
+import com.coinTradingSystem.UI.MainFrame.CoreController.Tables.BalanceTable;
+import com.coinTradingSystem.UI.MainFrame.CoreController.Tables.OrderTable;
+import com.coinTradingSystem.UI.MainFrame.CoreController.Variables.ControlValue;
+import com.coinTradingSystem.UI.MainFrame.MainFrame;
+
+public class CoreController {
+
+    public MainFrame mainFrame;
+    public CallBackFunctions callBackFunctions;
+    public ExchangeHandler exchangeHandler;
+    public BalanceTable balanceTable;
+    public OrderTable orderTable;
+    public ControlValue controlValue;
+    public EventHandler eventHandler;
+
+
+    public CoreController(MainFrame mainFrame){
+        this.mainFrame = mainFrame;
+        this.callBackFunctions = new CallBackFunctions(this);
+        this.exchangeHandler = new ExchangeHandler(this);
+        this.orderTable = new OrderTable(this);
+        this.balanceTable = new BalanceTable(this);
+        this.controlValue = new ControlValue(this);
+        this.eventHandler = new EventHandler(this);
+    }
+
+
+}

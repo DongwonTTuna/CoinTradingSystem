@@ -23,8 +23,7 @@ CREATE TABLE APIKEYS(
 
 INSERT INTO APIKEYS (exchange,api_key,secret_key) VALUES ('BINANCE',null,null);
 INSERT INTO APIKEYS (exchange,api_key,secret_key) VALUES ('GATEIO',null,null);
-INSERT INTO APIKEYS (exchange,api_key,secret_key) VALUES ('MEXC',null,null);
-INSERT INTO APIKEYS (exchange,api_key,secret_key) VALUES ('HUOBI',null,null);
+INSERT INTO APIKEYS (exchange,api_key,secret_key) VALUES ('UPBIT',null,null);
 
 DROP TABLE IF EXISTS TotalTradesNPnL;
 CREATE TABLE TotalTradesNPnL(
