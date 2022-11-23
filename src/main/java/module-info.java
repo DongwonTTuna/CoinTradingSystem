@@ -17,7 +17,7 @@ module com.example.cointradingsystem {
     opens com.coinTradingSystem to javafx.fxml;
     exports com.coinTradingSystem;
     exports com.coinTradingSystem.UI.MainFrame;
-    exports com.coinTradingSystem.ExchangeClass;
+    exports com.coinTradingSystem.CoreController.ExchangeHandler.ExchangeClass;
     exports com.coinTradingSystem.CoreController.TradeSystem;
     opens com.coinTradingSystem.UI.MainFrame to javafx.fxml;
     exports com.coinTradingSystem.UI.Connect;

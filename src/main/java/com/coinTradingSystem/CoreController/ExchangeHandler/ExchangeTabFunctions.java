@@ -1,6 +1,6 @@
 package com.coinTradingSystem.CoreController.ExchangeHandler;
 
-import com.coinTradingSystem.ExchangeClass.Exchanges;
+import com.coinTradingSystem.CoreController.ExchangeHandler.ExchangeClass.Exchanges;
 import com.coinTradingSystem.Main;
 import com.coinTradingSystem.SqlQuery;
 import com.coinTradingSystem.CoreController.CoreController;

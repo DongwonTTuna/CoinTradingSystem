@@ -1,11 +1,9 @@
 package com.coinTradingSystem.CoreController.TradeSystem;
 
 import com.coinTradingSystem.CoreController.CoreController;
-import com.coinTradingSystem.ExchangeClass.Exchanges;
 import com.coinTradingSystem.Main;
 import com.coinTradingSystem.SqlQuery;
 import org.knowm.xchange.dto.Order;
-import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 

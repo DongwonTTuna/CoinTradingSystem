@@ -1,4 +1,4 @@
-package com.coinTradingSystem.ExchangeClass;
+package com.coinTradingSystem.CoreController.ExchangeHandler.ExchangeClass;
 
 import com.coinTradingSystem.Main;
 import com.coinTradingSystem.SqlQuery;
