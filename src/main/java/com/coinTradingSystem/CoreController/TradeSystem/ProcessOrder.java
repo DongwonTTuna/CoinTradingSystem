@@ -193,7 +193,6 @@ public class ProcessOrder {
     private void OrderProcessPriv() {
         if (orders.orderList.size() == 0) return;
         for (ArrayList<String> item : orders.orderList) {
-            //System.out.println(item);
             String uuid = item.get(0);
             String symbol = item.get(1);
             int orderType = Integer.parseInt(item.get(2));
@@ -203,8 +202,7 @@ public class ProcessOrder {
             BigDecimal amount = cutUnderTheStepSize(stepSize, new BigDecimal(item.get(5)));
             BigDecimal price = core.exchangeHandler.exchange.getOneTickerPrice(symbol).getLast();
             BigDecimal minimumRequired = core.exchangeHandler.exchange.currencyPairs.getJSONObject(symbol).getBigDecimal("min_amount");
-
-            if (amount == null) {
+            if (amount == null || amount.multiply(price).compareTo(minimumRequired) < 0) {
                 core.controlValue.AddLog("取引の実行に必要な最少額を満たさない為、オーダーがキャンセルされました。");
                 core.controlValue.AddLog("オーダー UUID : " + uuid);
                 core.controlValue.AddLog("オーダー Symbol : " + symbol);

@@ -38,6 +38,7 @@ public interface OrderTabEvent {
         else if (tempDouble >= 0.000001) return String.format("%.8f",tempDouble);
         else if (tempDouble >= 0.0000001) return String.format("%.9f",tempDouble);
         else if (tempDouble >= 0.00000001) return String.format("%.10f",tempDouble);
+        else if (tempDouble == 0) return "0";
         throw new RuntimeException();
     }
     default String getCutStringAmount(String text){
@@ -51,6 +52,7 @@ public interface OrderTabEvent {
         else if (tempDouble >= 0.000001) return String.format("%.8f",tempDouble);
         else if (tempDouble >= 0.0000001) return String.format("%.9f",tempDouble);
         else if (tempDouble >= 0.00000001) return String.format("%.10f",tempDouble);
+        else if (tempDouble == 0) return "0";
         throw new RuntimeException();
     }
     default String getOrderTypeString(String num) {

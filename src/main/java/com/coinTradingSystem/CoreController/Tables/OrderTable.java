@@ -13,6 +13,7 @@ import com.coinTradingSystem.CoreController.addEventOnAction;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class OrderTable extends OrderWindowEvent implements addEventOnAction {
@@ -22,7 +23,7 @@ public class OrderTable extends OrderWindowEvent implements addEventOnAction {
         ObservableList<TableVariables.Order> order = coreController.mainFrame.OrderTable.getItems();
 
         SqlQuery.getOrderList(Main.CurrentExchange).forEach((item) -> {
-            System.out.println();
+            String worth = getCutStringAmount(new BigDecimal(item.get(3)).add(new BigDecimal(item.get(4))).divide(new BigDecimal(2)).multiply(new BigDecimal(item.get(5))).toString());
             order.add(new TableVariables.Order(
                     item.get(0),
                     item.get(1),
@@ -30,7 +31,7 @@ public class OrderTable extends OrderWindowEvent implements addEventOnAction {
                     getCutStringPrice(item.get(3)),
                     getCutStringPrice(item.get(4)),
                     getCutStringAmount(item.get(5)),
-                    getCutStringAmount(new BigDecimal(item.get(3)).add(new BigDecimal(item.get(4))).divide(new BigDecimal(2)).multiply(new BigDecimal(item.get(5))).toString())
+                    Objects.equals(Main.CurrentExchange, "UPBIT") ? "₩ " + worth  : "$ " + worth
             ));
         });
 

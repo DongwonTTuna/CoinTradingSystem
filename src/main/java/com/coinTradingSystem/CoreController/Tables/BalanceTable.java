@@ -1,5 +1,6 @@
 package com.coinTradingSystem.CoreController.Tables;
 
+import com.coinTradingSystem.CoreController.OrderTabEvent;
 import com.coinTradingSystem.Main;
 import com.coinTradingSystem.CoreController.CoreController;
 import com.coinTradingSystem.UI.MainFrame.TableVariables;
@@ -9,7 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class BalanceTable {
+public class BalanceTable implements OrderTabEvent {
     private final CoreController coreController;
 
     public void InitializeBalanceTableView() {
@@ -18,7 +19,7 @@ public class BalanceTable {
         coreController.callBackFunctions.WaitTilAccountBalanceInitialized();
         coreController.exchangeHandler.exchange.UserAccountBalance.forEach(item -> {
             String symbol = item.get("symbol");
-            String withdrawable = "NONE FOR UPBIT";
+            String withdrawable = "Unsupported function for upbit";
             BigDecimal totalamount = new BigDecimal(item.get("totalbal"));
             String amount = String.format("%.8f", totalamount);
             String freeze = String.format("%.8f", new BigDecimal(item.get("freeze")));
@@ -40,10 +41,10 @@ public class BalanceTable {
 
             balance.add(new TableVariables.Balance(
                     symbol,
-                    amount,
-                    freeze,
+                    getCutStringAmount(amount),
+                    getCutStringAmount(freeze),
                     withdrawable,
-                    currentWorth
+                    Objects.equals(Main.CurrentExchange, "UPBIT") ? "₩ " + getCutStringAmount(currentWorth)  : "$ " + getCutStringAmount(currentWorth)
             ));
         });
         coreController.mainFrame.BalanceTable.setItems(balance);

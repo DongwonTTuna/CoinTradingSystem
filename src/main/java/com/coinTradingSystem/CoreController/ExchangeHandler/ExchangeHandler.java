@@ -17,9 +17,9 @@ public class ExchangeHandler extends ExchangeTabFunctions implements addEventOnA
     private void ExchangeSetup() {
         coreController.mainFrame.ConnectionLog.setText(Main.CurrentExchange + "に接続中");
         switch (Main.CurrentExchange) {
-            case "BINANCE" -> exchange = new Exchanges(BinanceExchange.class.getName(),coreController);
-            case "GATEIO" -> exchange = new Exchanges(GateioExchange.class.getName(),coreController);
-            case "UPBIT" -> exchange = new Exchanges(UpbitExchange.class.getName(),coreController);
+            case "BINANCE" -> {exchange = new Exchanges(BinanceExchange.class.getName(),coreController);coreController.mainFrame.OrderWorthInUsd.setText("Worth In USDT");coreController.mainFrame.BalanceWorthInUSD.setText("Worth In USDT");}
+            case "GATEIO" -> {exchange = new Exchanges(GateioExchange.class.getName(),coreController);coreController.mainFrame.OrderWorthInUsd.setText("Worth In USDT");coreController.mainFrame.BalanceWorthInUSD.setText("Worth In USDT");}
+            case "UPBIT" -> {exchange = new Exchanges(UpbitExchange.class.getName(),coreController);coreController.mainFrame.OrderWorthInUsd.setText("Worth In KRW");coreController.mainFrame.BalanceWorthInUSD.setText("Worth In KRW");}
         }
         ConnectionLogUpdate();
         SetupTheTab(coreController.mainFrame.InfoTab.getSelectionModel().getSelectedItem().getText(),coreController);
