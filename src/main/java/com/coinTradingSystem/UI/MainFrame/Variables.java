@@ -1,14 +1,12 @@
 package com.coinTradingSystem.UI.MainFrame;
 
-import com.coinTradingSystem.UI.MainFrame.CoreController.CoreController;
+import com.coinTradingSystem.CoreController.CoreController;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 public class Variables extends TableVariables {
+
     @FXML
     public Label ExchangeStatus;
     @FXML

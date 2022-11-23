@@ -1,8 +1,6 @@
-package com.coinTradingSystem.UI.MainFrame.CoreController;
+package com.coinTradingSystem.CoreController;
 
 import com.coinTradingSystem.Main;
-import com.coinTradingSystem.SqlQuery;
-import com.coinTradingSystem.UI.MainFrame.TableVariables;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -52,16 +50,16 @@ public interface addEventOnAction {
         });
     }
 
-    private void SetupTheTab(String ChangedTabText, CoreController core) {
+    default void SetupTheTab(String ChangedTabText, CoreController core) {
         switch (ChangedTabText) {
             case "Status" ->
-                    CompletableFuture.runAsync(() -> core.callBackFunctions.WaitTilExchangeInitializeDone()).thenAcceptAsync((s) -> core.exchangeHandler.UpdateStatusTabVariables());
+                    core.exchangeHandler.UpdateStatusTabVariables();
 
             case "Balances" ->
-                    CompletableFuture.runAsync(() -> core.callBackFunctions.WaitTilExchangeInitializeDone()).thenAcceptAsync((s) -> core.exchangeHandler.UpdateBalanceTabVariables());
+                    CompletableFuture.runAsync(() -> core.exchangeHandler.UpdateBalanceTabVariables());
 
             case "Orders" ->
-                    CompletableFuture.runAsync(() -> core.callBackFunctions.WaitTilExchangeInitializeDone()).thenAcceptAsync((s) -> core.exchangeHandler.UpdateOrdersTabVariables());
+                    CompletableFuture.runAsync(() -> core.exchangeHandler.UpdateOrdersTabVariables());
         }
     }
 
@@ -76,41 +74,5 @@ public interface addEventOnAction {
     }
 
 
-    default void onRemoveButtonClicked(Button btn, CoreController core) {
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                TableVariables.Order order = core.mainFrame.OrderTable.getSelectionModel().getSelectedItem();
-                if (order == null) return;
-                String uuid = order.getUuid();
-                SqlQuery.removeOrder(uuid);
-                core.orderTable.InitializeOrderTableView();
-                core.controlValue.AddLog("オーダーが削除されました");
-            }
-        });
-    }
 
-    default void onRemoveAllButtonClicked(Button btn, CoreController core) {
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                SqlQuery.removeAllOrders();
-                core.orderTable.InitializeOrderTableView();
-                core.controlValue.AddLog("全てのオーダーが削除されました");
-            }
-        });
-    }
-
-    default void onAddOrderButtonClicked(Button btn, CoreController core) {
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                try {
-                    core.orderTable.OpenOrderWindowEvent(null);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-    }
 }

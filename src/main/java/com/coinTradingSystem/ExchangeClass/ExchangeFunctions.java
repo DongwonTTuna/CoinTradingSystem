@@ -1,9 +1,10 @@
-package com.coinTradingSystem.HandleExchange;
+package com.coinTradingSystem.ExchangeClass;
 
 import com.coinTradingSystem.Main;
-import com.coinTradingSystem.UI.MainFrame.CoreController.CoreController;
+import com.coinTradingSystem.SqlQuery;
+import com.coinTradingSystem.CoreController.CoreController;
+import org.json.JSONObject;
 import org.knowm.xchange.Exchange;
-import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.Wallet;
@@ -13,14 +14,12 @@ import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.knowm.xchange.service.trade.TradeService;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 public class ExchangeFunctions {
+    public String isAPINone;
     public CoreController core;
     public Exchange exchange;
     public AccountService accountService;
@@ -29,6 +28,8 @@ public class ExchangeFunctions {
     public HashMap<String,Instrument> AllTickerWithInstrument;
     public ArrayList<String> AllTickers;
 
+    public JSONObject currencyPairs;
+    public JSONObject currencies;
     public List<HashMap<String,String>> UserAccountBalance;
     public boolean initializeDone;
 
@@ -40,16 +41,13 @@ public class ExchangeFunctions {
         }
     }
 
-    public boolean getExchangeStatus() {
-        return accountService != null;
-    }
 
     private void getAllTickers() {
         HashMap<String,Instrument> tempHash = new HashMap<>();
         ArrayList<String> tempArr = new ArrayList<>();
         if (Objects.equals(Main.CurrentExchange, "UPBIT")){
             exchange.getExchangeInstruments().forEach((item)->{
-                if (item.toString().matches("[a-zA-Z0-9]+/KRW]")){
+                if (item.toString().matches("[a-zA-Z0-9]+/KRW")){
                     tempHash.put(item.toString(),item);
                     tempArr.add(item.toString());
                 }
@@ -89,11 +87,11 @@ public class ExchangeFunctions {
      */
 
     public Ticker getOneTickerPrice(String symbol){
-        try {
-            return marketDataService.getTicker((CurrencyPair) AllTickerWithInstrument.get(symbol));
-        }catch (Exception e){
-            throw new RuntimeException();
-        }
+            try {
+                return marketDataService.getTicker((CurrencyPair) AllTickerWithInstrument.get(symbol));
+            }catch (Exception ignored){
+                return null;
+            }
     }
 
 
@@ -104,6 +102,7 @@ public class ExchangeFunctions {
 
     public void getUserAccountBalance() {
         try {
+            core.callBackFunctions.WaitTilAccountIsNotNull();
             ArrayList<Balance> arr = new ArrayList<>(accountService.getAccountInfo().getWallet().balances());
             ArrayList<HashMap<String,String>> tempArrHashmap = new ArrayList<>();
             arr.forEach((item)->{
@@ -111,7 +110,12 @@ public class ExchangeFunctions {
                 if (!(totalbal.compareTo(BigDecimal.ZERO) > 0)) return;
                 String symbol = item.getCurrency().toString();
 
-                if(!Objects.equals(symbol, "USDT") && !AllTickers.contains(symbol + "/USDT")) return;
+                if(Objects.equals(Main.CurrentExchange, "UPBIT")){
+                    if(!AllTickers.contains(symbol + "/KRW")) return;
+                }else{
+                    if (!Objects.equals(symbol, "USDT") && !AllTickers.contains(symbol + "/USDT")) return;
+                }
+
                 HashMap<String,String> tempHashmap = new HashMap<>();
                 tempHashmap.put("symbol", symbol);
                 tempHashmap.put("totalbal", totalbal.toEngineeringString());
@@ -124,5 +128,23 @@ public class ExchangeFunctions {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void getWalletInfo(){
+        try{
+             JSONObject tempJson = new JSONObject(exchange.getExchangeMetaData().toJSONString());
+             try{
+                 currencyPairs = tempJson.getJSONObject("currency_pairs");
+                 currencies = tempJson.getJSONObject("currencies");
+             } catch (Exception ignored){
+
+             }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public BigDecimal getPastWalletInfo(){
+        return SqlQuery.getLastProfit(Main.CurrentExchange);
     }
 }

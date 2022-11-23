@@ -6,6 +6,8 @@ import javafx.scene.control.*;
 
 public class ControlOrder {
     @FXML
+    public CheckBox MarketTrade;
+    @FXML
     public Button Submit;
     @FXML
     public Label UUIDLabel;
@@ -29,5 +31,7 @@ public class ControlOrder {
     public RadioButton OrderTypeLossCut;
     @FXML
     public RadioButton OrderTypeTakeProfit;
+    @FXML
+    public Label LastestPrice;
 
 }

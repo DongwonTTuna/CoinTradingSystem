@@ -73,7 +73,7 @@
                                                   <TableColumn fx:id="BalanceWorthInUSD" prefWidth="228.0" style="-fx-alignment: CENTER;" text="Worth In USDT" />
                                               </columns>
                                           </TableView>
-                                          <Label layoutX="468.0" layoutY="8.0" prefHeight="18.0" prefWidth="101.0" text="Total Balance :  $  " />
+                                          <Label layoutX="468.0" layoutY="8.0" prefHeight="18.0" prefWidth="101.0" text="Total Balance :  " />
                                           <Label fx:id="TotalBalanceInUSD" layoutX="569.0" layoutY="8.0" prefHeight="18.0" prefWidth="104.0" />
                                       </children>
                                    </AnchorPane>
@@ -85,12 +85,13 @@
                                       <children>
                                           <TableView fx:id="OrderTable" layoutX="4.0" layoutY="33.0" prefHeight="412.0" prefWidth="675.0">
                                               <columns>
-                                                  <TableColumn fx:id="OrderUUID" prefWidth="198.0" text="Order UUID" />
-                                                  <TableColumn fx:id="OrderSymbol" minWidth="0.0" prefWidth="77.0" style="-fx-alignment: CENTER;" text="Symbol" />
-                                                  <TableColumn fx:id="OrderOrderType" prefWidth="86.0" style="-fx-alignment: CENTER;" text="OrderType" />
-                                                  <TableColumn fx:id="OrderTargetPrice" prefWidth="107.0" style="-fx-alignment: CENTER_RIGHT;" text="TargetPrice" />
-                                                  <TableColumn fx:id="OrderTriggerPrice" prefWidth="109.0" style="-fx-alignment: CENTER_RIGHT;" text="TriggerPrice" />
-                                                  <TableColumn fx:id="OrderAmount" prefWidth="95.0" style="-fx-alignment: CENTER_RIGHT;" text="Amount" />
+                                                  <TableColumn fx:id="OrderUUID" prefWidth="145.0" text="Order UUID" />
+                                                  <TableColumn fx:id="OrderSymbol" minWidth="0.0" prefWidth="78.0" style="-fx-alignment: CENTER;" text="Symbol" />
+                                                  <TableColumn fx:id="OrderOrderType" prefWidth="70.0" style="-fx-alignment: CENTER;" text="OrderType" />
+                                                  <TableColumn fx:id="OrderTargetPrice" prefWidth="98.0" style="-fx-alignment: CENTER_RIGHT;" text="TargetPrice" />
+                                                  <TableColumn fx:id="OrderTriggerPrice" prefWidth="104.0" style="-fx-alignment: CENTER_RIGHT;" text="TriggerPrice" />
+                                                  <TableColumn fx:id="OrderAmount" prefWidth="94.0" style="-fx-alignment: CENTER_RIGHT;" text="Amount" />
+                                          <TableColumn fx:id="OrderWorthInUsd" prefWidth="85.0" style="-fx-alignment: CENTER_RIGHT;" text="Worth In USD" />
                                               </columns>
                                               <rotationAxis>
                                                   <Point3D />

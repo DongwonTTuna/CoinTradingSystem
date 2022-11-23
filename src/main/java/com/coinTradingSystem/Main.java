@@ -18,10 +18,10 @@ import java.util.Objects;
 
 public class Main extends Application{
 
-    public static String CurrentExchange;
-    public static String CurrentTabText;
-    public static boolean isExchangeLoaded = false;
-    private static HashMap<String,HashMap<String,String>> API;
+    public static volatile  String CurrentExchange;
+    public static volatile String CurrentTabText;
+    public static volatile boolean isExchangeLoaded = false;
+    private static volatile HashMap<String,HashMap<String,String>> API;
     @Override
     public void start(Stage pStage) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/MainFrame.fxml")));

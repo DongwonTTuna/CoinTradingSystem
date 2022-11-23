@@ -1,8 +1,8 @@
-package com.coinTradingSystem.UI.MainFrame.CoreController.Variables;
+package com.coinTradingSystem.CoreController.Variables;
 
 import com.coinTradingSystem.Main;
 import com.coinTradingSystem.SqlQuery;
-import com.coinTradingSystem.UI.MainFrame.CoreController.CoreController;
+import com.coinTradingSystem.CoreController.CoreController;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 
@@ -39,6 +39,6 @@ public class ControlValue {
     }
 
     public void InitializeOnStart(){
-        CompletableFuture.runAsync(() -> coreController.callBackFunctions.WaitTilExchangeInitializeDone()).thenAcceptAsync((s) -> coreController.exchangeHandler.UpdateStatusTabVariables());
+        CompletableFuture.runAsync(() -> coreController.exchangeHandler.UpdateStatusTabVariables());
     }
 }

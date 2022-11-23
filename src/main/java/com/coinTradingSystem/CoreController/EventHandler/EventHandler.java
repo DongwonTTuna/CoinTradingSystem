@@ -1,10 +1,10 @@
-package com.coinTradingSystem.UI.MainFrame.CoreController.EventHandler;
+package com.coinTradingSystem.CoreController.EventHandler;
 
 import com.coinTradingSystem.Main;
 import com.coinTradingSystem.SqlQuery;
 import com.coinTradingSystem.UI.Connect.connectAPI;
-import com.coinTradingSystem.UI.MainFrame.CoreController.CoreController;
-import com.coinTradingSystem.UI.MainFrame.CoreController.addEventOnAction;
+import com.coinTradingSystem.CoreController.CoreController;
+import com.coinTradingSystem.CoreController.addEventOnAction;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,6 +18,7 @@ import java.util.Objects;
 
 public class EventHandler implements addEventOnAction {
     private final CoreController coreController;
+    public boolean OrderPrevChecked = false;
 
     protected void onBalanceSelected(){
         coreController.mainFrame.TotalBalanceInUSD.setText(String.format("%.3f",coreController.mainFrame.TB));
@@ -35,8 +36,8 @@ public class EventHandler implements addEventOnAction {
             String exchange =  SelectedRB.getText();
             String api_key = login.API_KEY.getText();
             String secret_key = login.SECRET_KEY.getText();
+            Main.setAPI(exchange, api_key, secret_key);
             if (!Main.isExchangeLoaded) {
-                Main.setAPI(exchange, api_key, secret_key);
                 coreController.exchangeHandler.ExchangeFunction();
             }
             if (login.toDatabase.isSelected()){

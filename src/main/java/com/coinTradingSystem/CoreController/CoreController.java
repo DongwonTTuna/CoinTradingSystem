@@ -1,11 +1,12 @@
-package com.coinTradingSystem.UI.MainFrame.CoreController;
+package com.coinTradingSystem.CoreController;
 
-import com.coinTradingSystem.UI.MainFrame.CoreController.EventHandler.CallBackFunctions;
-import com.coinTradingSystem.UI.MainFrame.CoreController.EventHandler.EventHandler;
-import com.coinTradingSystem.UI.MainFrame.CoreController.ExchangeHandler.ExchangeHandler;
-import com.coinTradingSystem.UI.MainFrame.CoreController.Tables.BalanceTable;
-import com.coinTradingSystem.UI.MainFrame.CoreController.Tables.OrderTable;
-import com.coinTradingSystem.UI.MainFrame.CoreController.Variables.ControlValue;
+import com.coinTradingSystem.CoreController.EventHandler.CallBackFunctions;
+import com.coinTradingSystem.CoreController.EventHandler.EventHandler;
+import com.coinTradingSystem.CoreController.ExchangeHandler.ExchangeHandler;
+import com.coinTradingSystem.CoreController.Tables.BalanceTable;
+import com.coinTradingSystem.CoreController.Tables.OrderTable;
+import com.coinTradingSystem.CoreController.TradeSystem.TradeCore;
+import com.coinTradingSystem.CoreController.Variables.ControlValue;
 import com.coinTradingSystem.UI.MainFrame.MainFrame;
 
 public class CoreController {
@@ -18,6 +19,7 @@ public class CoreController {
     public ControlValue controlValue;
     public EventHandler eventHandler;
 
+    public TradeCore tradeCore;
 
     public CoreController(MainFrame mainFrame){
         this.mainFrame = mainFrame;
@@ -27,6 +29,7 @@ public class CoreController {
         this.balanceTable = new BalanceTable(this);
         this.controlValue = new ControlValue(this);
         this.eventHandler = new EventHandler(this);
+        this.tradeCore = new TradeCore(this);
     }
 
 

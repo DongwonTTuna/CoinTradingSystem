@@ -1,8 +1,7 @@
 package com.coinTradingSystem.UI.MainFrame;
 
-import com.coinTradingSystem.UI.MainFrame.CoreController.CoreController;
+import com.coinTradingSystem.CoreController.CoreController;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
 
 
 public class MainFrame extends Variables {

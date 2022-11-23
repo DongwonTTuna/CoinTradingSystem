@@ -46,7 +46,7 @@ BEGIN
     exchange
   FROM
     APIKEYS LOOP
-      EXECUTE 'CREATE TABLE IF NOT EXISTS B.' || exc || 'BAL(symbol text NOT NULL, amount numeric not null, freeAmount numeric NOT NULL, freezeAmount numeric NOT NULL, withdrawable boolean NOT NULL, walletAddress text NOT NULL)';
+      EXECUTE 'CREATE TABLE IF NOT EXISTS B.' || exc || 'PROFIT(day NUMERIC NOT NULL, balance NUMERIC NOT NULL)';
       EXECUTE 'INSERT INTO TotalTradesNPnL (exchange, num, Pbal, Tbal) VALUES ('''|| exc ||''',0,0,0)';
     END LOOP;
 END

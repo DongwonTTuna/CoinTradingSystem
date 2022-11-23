@@ -1,8 +1,5 @@
 package com.coinTradingSystem.UI.MainFrame;
 
-import com.coinTradingSystem.UI.MainFrame.CoreController.Tables.BalanceTable;
-import com.coinTradingSystem.UI.MainFrame.CoreController.Tables.OrderTable;
-import com.coinTradingSystem.UI.MainFrame.Variables;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -15,15 +12,17 @@ public class TableVariables {
         private final String targetprice;
         private final String triggerprice;
         private final String amount;
+        private final String usdworth;
 
 
-        public Order(String uuid, String symbol, String ordertype, String targetprice, String triggerprice, String amount) {
+        public Order(String uuid, String symbol, String ordertype, String targetprice, String triggerprice, String amount, String usdworth) {
             this.uuid = uuid;
             this.symbol = symbol;
             this.ordertype = ordertype;
             this.targetprice = targetprice;
             this.triggerprice = triggerprice;
             this.amount = amount;
+            this.usdworth = usdworth;
         }
 
         public String getUuid() {
@@ -49,7 +48,7 @@ public class TableVariables {
         public String getAmount() {
             return this.amount;
         }
-
+        public String getUsdworth() { return this.usdworth;}
 
     }
 
@@ -103,6 +102,8 @@ public class TableVariables {
     public TableColumn<Order, String> OrderTriggerPrice;
     @FXML
     public TableColumn<Order, String> OrderAmount;
+    @FXML
+    public TableColumn<Order, String> OrderWorthInUsd;
 
     @FXML
     public TableView<Balance> BalanceTable;
@@ -116,4 +117,5 @@ public class TableVariables {
     public TableColumn<Balance, String> BalanceWithdrawable;
     @FXML
     public TableColumn<Balance, String> BalanceWorthInUSD;
+
 }
