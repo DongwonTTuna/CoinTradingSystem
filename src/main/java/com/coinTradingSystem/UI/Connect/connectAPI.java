@@ -2,22 +2,19 @@ package com.coinTradingSystem.UI.Connect;
 
 import com.coinTradingSystem.Main;
 import com.coinTradingSystem.SqlQuery;
+import com.coinTradingSystem.UI.Connect.EventHandler.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
 import java.util.concurrent.ExecutionException;
 
-public class connectAPI {
+public class connectAPI extends EventHandler {
+
+
     @FXML
-    public Button LoginButton;
-    @FXML
-    public ToggleGroup Exchange;
-    @FXML
-    public CheckBox toDatabase;
-    @FXML
-    public TextField API_KEY;
-    @FXML
-    public TextField SECRET_KEY;
+    public void initialize(){
+        addEventHandler();
+    }
 
 }

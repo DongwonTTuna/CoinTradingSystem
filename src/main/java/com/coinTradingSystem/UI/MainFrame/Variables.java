@@ -1,6 +1,7 @@
 package com.coinTradingSystem.UI.MainFrame;
 
 import com.coinTradingSystem.CoreController.CoreController;
+import com.coinTradingSystem.UI.MainFrame.Tab.UpdateTab;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -49,7 +50,8 @@ public class Variables extends TableVariables {
     public Tab BalanceTab;
     @FXML
     public Tab OrderTab;
-    public CoreController coreController;
+
+    public UpdateTab updateTab;
     public double TB = 0.0;
 
 }

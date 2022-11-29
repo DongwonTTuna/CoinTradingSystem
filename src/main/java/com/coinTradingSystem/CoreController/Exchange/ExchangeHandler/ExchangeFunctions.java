@@ -1,13 +1,11 @@
-package com.coinTradingSystem.CoreController.ExchangeHandler.ExchangeClass;
+package com.coinTradingSystem.CoreController.Exchange.ExchangeHandler;
 
-import com.coinTradingSystem.Main;
+import com.coinTradingSystem.CoreController.Exchange.ExchangeMain;
 import com.coinTradingSystem.SqlQuery;
-import com.coinTradingSystem.CoreController.CoreController;
 import org.json.JSONObject;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.account.Balance;
-import org.knowm.xchange.dto.account.Wallet;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.account.AccountService;
@@ -18,34 +16,46 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+import static org.awaitility.Awaitility.await;
+
 public class ExchangeFunctions {
+    public String ExchangeName;
     public String isAPINone;
-    public CoreController core;
     public Exchange exchange;
     public AccountService accountService;
     public MarketDataService marketDataService;
     public TradeService tradeService;
-    public HashMap<String,Instrument> AllTickerWithInstrument;
-    public ArrayList<String> AllTickers;
+    public ExchangeMain exData;
 
-    public JSONObject currencyPairs;
-    public JSONObject currencies;
-    public List<HashMap<String,String>> UserAccountBalance;
-    public boolean initializeDone;
-
-    public Wallet getWalletBalance() {
-        try {
-            return accountService.getAccountInfo().getWallet();
-        } catch (Exception e) {
-            throw new RuntimeException();
-        }
+    private void WaitTilAccountService(){
+        await().until(()->accountService != null);
+    }
+    private void WaitTilMarketDataService(){
+        await().until(()->marketDataService != null);
+    }
+    private void WaitTilTradeService(){
+        await().until(()->tradeService != null);
     }
 
+
+    public void runAll(){
+        WaitTilAccountService();
+        WaitTilMarketDataService();
+        WaitTilTradeService();
+
+        CompletableFuture.runAsync(this::getUserAccountBalance);
+        CompletableFuture.runAsync(this::getAllTickers).thenRunAsync(()->{
+            exData.WaitTilUserAccountBalances();
+            GetTotalBalanceInUSD();
+            getWalletInfo();
+            getPastWalletInfo();
+        });
+    }
 
     private void getAllTickers() {
         HashMap<String,Instrument> tempHash = new HashMap<>();
         ArrayList<String> tempArr = new ArrayList<>();
-        if (Objects.equals(Main.CurrentExchange, "UPBIT")){
+        if (Objects.equals(ExchangeName, "UPBIT")){
             exchange.getExchangeInstruments().forEach((item)->{
                 if (item.toString().matches("[a-zA-Z0-9]+/KRW")){
                     tempHash.put(item.toString(),item);
@@ -66,43 +76,41 @@ public class ExchangeFunctions {
 
         tempArr.sort(String.CASE_INSENSITIVE_ORDER);
 
-        AllTickerWithInstrument = tempHash;
-        AllTickers = tempArr;
+        exData.updateAllTWithI(tempHash);
+        exData.updateAllTickers(tempArr);
     }
 
-    /*
-    public void getAllPrices() {
-        ArrayList<Ticker> tempList = new ArrayList<>();
-        AllTicker.forEach((item) -> {
-                CompletableFuture.runAsync(()-> {
-                    try {
-                        tempList.add(marketDataService.getTicker((CurrencyPair) item));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-        });
-        AllTickerPriceData = tempList;
-    }
-     */
 
     public Ticker getOneTickerPrice(String symbol){
-            try {
-                return marketDataService.getTicker((CurrencyPair) AllTickerWithInstrument.get(symbol));
-            }catch (Exception ignored){
-                return null;
-            }
-    }
-
-
-    public void InitializeTickersAndPrice() {
-        CompletableFuture.runAsync(this::getAllTickers);
-        CompletableFuture.runAsync(this::getUserAccountBalance);
-    }
-
-    public void getUserAccountBalance() {
         try {
-            core.callBackFunctions.WaitTilAccountIsNotNull();
+            return marketDataService.getTicker((CurrencyPair) exData.getAllTickerWithInstrument().get(symbol));
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    private void GetTotalBalanceInUSD(){
+        BigDecimal totalBalance = new BigDecimal(0);
+        for (HashMap<String, String> item : exData.getUserAccountBalance()) {
+            String symbol = item.get("symbol");
+            Ticker ticker;
+            BigDecimal price = new BigDecimal(1);
+            if(!Objects.equals(ExchangeName, "UPBIT")){
+                if (!symbol.contains("USD")) {
+                    ticker = getOneTickerPrice(symbol + "/USDT");
+                    price = ticker.getLast();
+                }
+            }else{
+                ticker = getOneTickerPrice(symbol + "/KRW");
+                price = ticker.getLast();
+            }
+            BigDecimal tempBal = new BigDecimal(item.get("totalbal"));
+            totalBalance = totalBalance.add(tempBal.multiply(price));
+        }
+        exData.updateTotalBalanceInBC(totalBalance);
+    }
+    private void getUserAccountBalance() {
+        try {
             ArrayList<Balance> arr = new ArrayList<>(accountService.getAccountInfo().getWallet().balances());
             ArrayList<HashMap<String,String>> tempArrHashmap = new ArrayList<>();
             arr.forEach((item)->{
@@ -110,10 +118,10 @@ public class ExchangeFunctions {
                 if (!(totalbal.compareTo(BigDecimal.ZERO) > 0)) return;
                 String symbol = item.getCurrency().toString();
 
-                if(Objects.equals(Main.CurrentExchange, "UPBIT")){
-                    if(!AllTickers.contains(symbol + "/KRW")) return;
+                if(Objects.equals(ExchangeName, "UPBIT")){
+                    if(!exData.getAllTickers().contains(symbol + "/KRW")) return;
                 }else{
-                    if (!Objects.equals(symbol, "USDT") && !AllTickers.contains(symbol + "/USDT")) return;
+                    if (!Objects.equals(symbol, "USDT") && !exData.getAllTickers().contains(symbol + "/USDT")) return;
                 }
 
                 HashMap<String,String> tempHashmap = new HashMap<>();
@@ -124,27 +132,24 @@ public class ExchangeFunctions {
                 tempHashmap.put("withdrawable",item.getAvailableForWithdrawal().toString());
                 tempArrHashmap.add(tempHashmap);
             });
-            UserAccountBalance = tempArrHashmap;
+            exData.updateUserAccountBalance(tempArrHashmap);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void getWalletInfo(){
+    private void getWalletInfo(){
         try{
              JSONObject tempJson = new JSONObject(exchange.getExchangeMetaData().toJSONString());
              try{
-                 currencyPairs = tempJson.getJSONObject("currency_pairs");
-                 currencies = tempJson.getJSONObject("currencies");
+                 exData.updateCurrencyPairs(tempJson.getJSONObject("currency_pairs"));
+                 exData.updateCurrencies(tempJson.getJSONObject("currencies"));
              } catch (Exception ignored){
-
              }
-
         }catch (Exception e){
             e.printStackTrace();
         }
     }
-
-    public BigDecimal getPastWalletInfo(){
-        return SqlQuery.getLastProfit(Main.CurrentExchange);
+    public void getPastWalletInfo(){
+        exData.updateYesterDayWalletValue(SqlQuery.getLastProfit(ExchangeName));
     }
 }

@@ -1,4 +1,4 @@
-package com.coinTradingSystem.CoreController.TradeSystem;
+package com.coinTradingSystem.CoreController.Exchange.OrderThread;
 
 import com.coinTradingSystem.Main;
 import com.coinTradingSystem.SqlQuery;
@@ -11,7 +11,7 @@ public class FetchOrder {
     public FetchOrder(){
         CompletableFuture.runAsync(()->{
             while(true){
-                orderList = SqlQuery.getOrderList(Main.CurrentExchange);
+                orderList = SqlQuery.getOrderList(Main.Exchange.getExchangeName());
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {

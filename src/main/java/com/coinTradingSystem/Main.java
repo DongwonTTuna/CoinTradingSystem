@@ -1,12 +1,15 @@
 package com.coinTradingSystem;
+import com.coinTradingSystem.CoreController.CoreController;
+import com.coinTradingSystem.CoreController.Exchange.ExchangeMain;
+import com.coinTradingSystem.CoreController.InterFace.AddLog;
+import com.coinTradingSystem.UI.MainFrame.MainFrame;
+import com.coinTradingSystem.UI.MainFrame.Tab.UpdateTab;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,25 +19,31 @@ import java.util.Objects;
 
 
 
-public class Main extends Application{
+public class Main extends Application implements AddLog{
+    public static volatile CoreController coreController;
+    public static volatile MainFrame mainFrame;
 
-    public static volatile  String CurrentExchange;
+    public static volatile ExchangeMain Exchange;
     public static volatile String CurrentTabText;
     public static volatile boolean isExchangeLoaded = false;
     private static volatile HashMap<String,HashMap<String,String>> API;
     @Override
     public void start(Stage pStage) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/MainFrame.fxml")));
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/MainFrame.fxml")));
+        Parent root = loader.load();
+        mainFrame = loader.getController();
+
+        AddLog("初期化の処理中");
+        mainFrame.updateTab = new UpdateTab();
+        new CoreController();
+
 
         pStage.setTitle("仮想通貨取引プログラム");
         pStage.setScene(new Scene(root,1400,700));
         pStage.setResizable(false);
-        pStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent t) {
+        pStage.setOnCloseRequest(windowEvent ->  {
                 Platform.exit();
                 System.exit(0);
-            }
         });
         pStage.show();
     }
@@ -54,14 +63,6 @@ public class Main extends Application{
     }
     public static void main(String[] args) {
         getAPIfromDatabase();
-        CurrentExchange = "BINANCE";
-        if (API.get(CurrentExchange).get("apikey") != null){
-            isExchangeLoaded = true;
-        }
-
         launch();
-        //sql.insertOrder("BINANCE", (short)0, "BTCUSDT", 0, 20000.0, 12.0);
-        //sql.updateOrder("4bafb6ff-b26a-48dd-b114-85abe9371e47", "FTX", (short)0, "ETHUSD", 0, 0, 0);
-        //System.out.println(sql.getOrderList("BINANCE"));
     }
 }

@@ -1,6 +1,7 @@
-package com.coinTradingSystem.CoreController.TradeSystem;
+package com.coinTradingSystem.CoreController.Exchange.OrderThread;
 
 import com.coinTradingSystem.CoreController.CoreController;
+import com.coinTradingSystem.CoreController.InterFace.AddLog;
 import com.coinTradingSystem.Main;
 import com.coinTradingSystem.SqlQuery;
 import org.knowm.xchange.dto.Order;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 
-public class ProcessOrder {
+public class ProcessOrder implements AddLog {
     private CoreController core;
     private FetchOrder orders;
     private String currentExchange;
@@ -21,45 +22,45 @@ public class ProcessOrder {
 
     private void PlaceSellMarket(String uuid, String symbol, BigDecimal amount) {
         try {
-            MarketOrder marketOrder = new MarketOrder(Order.OrderType.ASK, amount, core.exchangeHandler.exchange.AllTickerWithInstrument.get(symbol));
-            core.exchangeHandler.exchange.tradeService.placeMarketOrder(marketOrder);
+            MarketOrder marketOrder = new MarketOrder(Order.OrderType.ASK, amount, Main.Exchange.getAllTickerWithInstrument().get(symbol));
+            Main.Exchange.getTradeService().placeMarketOrder(marketOrder);
         } catch (Exception e) {
             if (!Main.isExchangeLoaded) return;
-            core.controlValue.AddLog("オーダー実行中にエラーが発生しました。");
-            core.controlValue.AddLog("オーダーを削除します。");
-            core.controlValue.AddLog("オーダー 種類 : 売却 ー 成行注文");
-            core.controlValue.AddLog("オーダー UUID : " + uuid);
-            core.controlValue.AddLog("オーダー Symbol : " + symbol);
-            core.controlValue.AddLog("オーダー 数量 : " + amount);
+            AddLog("オーダー実行中にエラーが発生しました。");
+            AddLog("オーダーを削除します。");
+            AddLog("オーダー 種類 : 売却 ー 成行注文");
+            AddLog("オーダー UUID : " + uuid);
+            AddLog("オーダー Symbol : " + symbol);
+            AddLog("オーダー 数量 : " + amount);
         }
     }
 
     private void PlaceBuyMarket(String uuid, String symbol, BigDecimal amount) {
         try {
-            MarketOrder marketOrder = new MarketOrder(Order.OrderType.BID, amount, core.exchangeHandler.exchange.AllTickerWithInstrument.get(symbol));
-            core.exchangeHandler.exchange.tradeService.placeMarketOrder(marketOrder);
+            MarketOrder marketOrder = new MarketOrder(Order.OrderType.BID, amount, Main.Exchange.getAllTickerWithInstrument().get(symbol));
+            Main.Exchange.getTradeService().placeMarketOrder(marketOrder);
         } catch (Exception e) {
-            core.controlValue.AddLog("オーダー実行中にエラーが発生しました。");
-            core.controlValue.AddLog("オーダーを削除します。");
-            core.controlValue.AddLog("オーダー 種類 : 買収 ー 成行注文");
-            core.controlValue.AddLog("オーダー UUID : " + uuid);
-            core.controlValue.AddLog("オーダー Symbol : " + symbol);
-            core.controlValue.AddLog("オーダー 数量 : " + amount);
+            AddLog("オーダー実行中にエラーが発生しました。");
+            AddLog("オーダーを削除します。");
+            AddLog("オーダー 種類 : 買収 ー 成行注文");
+            AddLog("オーダー UUID : " + uuid);
+            AddLog("オーダー Symbol : " + symbol);
+            AddLog("オーダー 数量 : " + amount);
         }
 
     }
 
     private void PlaceSellLimit(String uuid, String symbol, BigDecimal amount, BigDecimal price) {
         try {
-            LimitOrder limitOrder = new LimitOrder(Order.OrderType.ASK, amount, core.exchangeHandler.exchange.AllTickerWithInstrument.get(symbol), null, null, price);
+            LimitOrder limitOrder = new LimitOrder(Order.OrderType.ASK, amount, Main.Exchange.getAllTickerWithInstrument().get(symbol), null, null, price);
         } catch (Exception e) {
-            core.controlValue.AddLog("オーダー実行中にエラーが発生しました。");
-            core.controlValue.AddLog("オーダーを削除します。");
-            core.controlValue.AddLog("オーダー 種類 : 売却 ー 指値注文");
-            core.controlValue.AddLog("オーダー UUID : " + uuid);
-            core.controlValue.AddLog("オーダー Symbol : " + symbol);
-            core.controlValue.AddLog("オーダー 数量 : " + amount);
-            core.controlValue.AddLog("オーダー 価格 : " + price);
+            AddLog("オーダー実行中にエラーが発生しました。");
+            AddLog("オーダーを削除します。");
+            AddLog("オーダー 種類 : 売却 ー 指値注文");
+            AddLog("オーダー UUID : " + uuid);
+            AddLog("オーダー Symbol : " + symbol);
+            AddLog("オーダー 数量 : " + amount);
+            AddLog("オーダー 価格 : " + price);
 
         }
 
@@ -67,15 +68,15 @@ public class ProcessOrder {
 
     private void PlaceBuyLimit(String uuid, String symbol, BigDecimal amount, BigDecimal price) {
         try {
-            LimitOrder limitOrder = new LimitOrder(Order.OrderType.BID, amount, core.exchangeHandler.exchange.AllTickerWithInstrument.get(symbol), null, null, price);
+            LimitOrder limitOrder = new LimitOrder(Order.OrderType.BID, amount, Main.Exchange.getAllTickerWithInstrument().get(symbol), null, null, price);
         } catch (Exception e) {
-            core.controlValue.AddLog("オーダー実行中にエラーが発生しました。");
-            core.controlValue.AddLog("オーダーを削除します。");
-            core.controlValue.AddLog("オーダー 種類 : 買収 ー 指値注文");
-            core.controlValue.AddLog("オーダー UUID : " + uuid);
-            core.controlValue.AddLog("オーダー Symbol : " + symbol);
-            core.controlValue.AddLog("オーダー 数量 : " + amount);
-            core.controlValue.AddLog("オーダー 価格 : " + price);
+            AddLog("オーダー実行中にエラーが発生しました。");
+            AddLog("オーダーを削除します。");
+            AddLog("オーダー 種類 : 買収 ー 指値注文");
+            AddLog("オーダー UUID : " + uuid);
+            AddLog("オーダー Symbol : " + symbol);
+            AddLog("オーダー 数量 : " + amount);
+            AddLog("オーダー 価格 : " + price);
         }
     }
 
@@ -98,7 +99,7 @@ public class ProcessOrder {
 
     private void TPCheckTriggerPrice(BigDecimal currentPrice, String uuid, String symbol, BigDecimal triggerPrice, BigDecimal targetPrice, BigDecimal amount) {
         if (currentPrice.compareTo(triggerPrice) >= 0)
-            SqlQuery.updateOrder(uuid, Main.CurrentExchange, (short) 4, symbol, BigDecimal.ZERO, targetPrice, amount);
+            SqlQuery.updateOrder(uuid, Main.Exchange.getExchangeName(), (short) 4, symbol, BigDecimal.ZERO, targetPrice, amount);
 
     }
 
@@ -190,7 +191,7 @@ public class ProcessOrder {
         return tempDecimal;
     }
 
-    private void OrderProcessPriv() {
+    private void OrderProcessPriv(String CurrentExchange) {
         if (orders.orderList.size() == 0) return;
         for (ArrayList<String> item : orders.orderList) {
             String uuid = item.get(0);
@@ -198,18 +199,18 @@ public class ProcessOrder {
             int orderType = Integer.parseInt(item.get(2));
             BigDecimal targetPrice = new BigDecimal(item.get(3));
             BigDecimal triggerPrice = new BigDecimal(item.get(4));
-            String stepSize = core.exchangeHandler.exchange.currencyPairs.getJSONObject(symbol).get("amount_step_size").toString();
+            String stepSize = Main.Exchange.getCurrencyPairs().getJSONObject(symbol).get("amount_step_size").toString();
             BigDecimal amount = cutUnderTheStepSize(stepSize, new BigDecimal(item.get(5)));
-            BigDecimal price = core.exchangeHandler.exchange.getOneTickerPrice(symbol).getLast();
-            BigDecimal minimumRequired = core.exchangeHandler.exchange.currencyPairs.getJSONObject(symbol).getBigDecimal("min_amount");
+            BigDecimal price =  Main.Exchange.getOneTicker(symbol).getLast();
+            BigDecimal minimumRequired = Main.Exchange.getCurrencyPairs().getJSONObject(symbol).getBigDecimal("min_amount");
             if (amount == null || amount.multiply(price).compareTo(minimumRequired) < 0) {
-                core.controlValue.AddLog("取引の実行に必要な最少額を満たさない為、オーダーがキャンセルされました。");
-                core.controlValue.AddLog("オーダー UUID : " + uuid);
-                core.controlValue.AddLog("オーダー Symbol : " + symbol);
-                core.controlValue.AddLog("オーダー 数量 : " + String.format("%.8f",new BigDecimal(item.get(5))));
-                core.controlValue.AddLog("オーダー 価格 : " + price);
+                AddLog("取引の実行に必要な最少額を満たさない為、オーダーがキャンセルされました。");
+                AddLog("オーダー UUID : " + uuid);
+                AddLog("オーダー Symbol : " + symbol);
+                AddLog("オーダー 数量 : " + String.format("%.8f",new BigDecimal(item.get(5))));
+                AddLog("オーダー 価格 : " + price);
                 SqlQuery.removeOrder(uuid);
-                core.orderTable.InitializeOrderTableView();
+                Main.mainFrame.updateTab.UpdateAllTabs();
             }
 
             boolean MarketPrice = false;
@@ -229,17 +230,17 @@ public class ProcessOrder {
 
 
     public void OrderProcessStart() {
-        currentExchange = Main.CurrentExchange;
+        currentExchange = Main.Exchange.getExchangeName();
         while (true) {
-            if (!Objects.equals(Main.CurrentExchange, currentExchange)) {
+            if (!Objects.equals(Main.Exchange.getExchangeName(), currentExchange)) {
                 try {
                     Thread.sleep(5000);
-                    currentExchange = Main.CurrentExchange;
+                    currentExchange = Main.Exchange.getExchangeName();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
-            OrderProcessPriv();
+            OrderProcessPriv(currentExchange);
             try {
                 Thread.sleep(5000);
             } catch (Exception e) {
@@ -248,8 +249,8 @@ public class ProcessOrder {
         }
     }
 
-    public ProcessOrder(CoreController coreController, FetchOrder orders) {
-        core = coreController;
+    public ProcessOrder(FetchOrder orders) {
+        core = Main.coreController;
         this.orders = orders;
         OrderProcessStart();
     }

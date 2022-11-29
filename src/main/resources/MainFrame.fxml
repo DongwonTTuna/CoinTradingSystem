@@ -115,7 +115,7 @@
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="757.0" prefWidth="706.0">
                  <children>
                      <Label layoutX="14.0" layoutY="7.0" text="Logs" />
-                  <VBox fx:id="LogBox" alignment="BOTTOM_RIGHT" layoutY="35.0" prefHeight="624.0" prefWidth="676.0" style="-fx-background-color: #ffffff;" />
+                  <VBox fx:id="LogBox" alignment="BOTTOM_RIGHT" layoutY="35.0" prefHeight="624.0" prefWidth="676.0" style="-fx-background-color: #ffffff; overflow: auto;" />
                  </children>
               </AnchorPane>
           </items>

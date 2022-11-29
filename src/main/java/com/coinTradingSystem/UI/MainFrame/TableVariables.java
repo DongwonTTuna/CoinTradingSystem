@@ -1,5 +1,6 @@
 package com.coinTradingSystem.UI.MainFrame;
 
+import com.coinTradingSystem.UI.MainFrame.EventHandler.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
