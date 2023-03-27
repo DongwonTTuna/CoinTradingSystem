@@ -1,0 +1,173 @@
+package dongwontuna.net.coinTradingSystem
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import slick.jdbc.SQLiteProfile.api._
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
+import slick.ast.ColumnOption.PrimaryKey
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+import java.io.IOException
+import concurrent.duration.DurationInt
+import slick.lifted.ProvenShape
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
+case class API(exchangeName: String, apiKey: String, secretKey: String)
+class APIKEYs(tag: Tag) extends Table[API](tag, "APIKEY") {
+  def exchangeName: Rep[String] = column[String]("EXCHANGE", O.PrimaryKey)
+  def apiKey: Rep[String] = column[String]("API_KEY")
+  def secretKey: Rep[String] = column[String]("SECRET_KEY")
+
+  def * : ProvenShape[API] = (exchangeName, apiKey, secretKey).<>(
+    (API.apply _).tupled,
+    (api: API) => Some((api.exchangeName, api.apiKey, api.secretKey))
+  )
+
+}
+case class DAILYDATA(
+    date: Int,
+    totalBalance: BigDecimal,
+    tradeNum: Int,
+    dailyPNL: BigDecimal
+)
+class DAILYDATAs(tag: Tag) extends Table[DAILYDATA](tag, "DAILYDATA") {
+  def date: Rep[Int] = column[Int]("DATE", O.PrimaryKey)
+  def totalBalance: Rep[BigDecimal] = column[BigDecimal]("TOTAL_BALANCE")
+  def tradeNum: Rep[Int] = column[Int]("TRADE_NUM")
+  def dailyPNL: Rep[BigDecimal] = column[BigDecimal]("TODAY_PNL")
+
+  def * : ProvenShape[DAILYDATA] = (date, totalBalance, tradeNum, dailyPNL).<>(
+    (DAILYDATA.apply _).tupled,
+    (dailyData: DAILYDATA) =>
+      Some(
+        (
+          dailyData.date,
+          dailyData.totalBalance,
+          dailyData.tradeNum,
+          dailyData.dailyPNL
+        )
+      )
+  )
+}
+
+case class ORDER(
+    orderUUID: String,
+    exchangeName: String,
+    ticker: String,
+    orderType: Int,
+    triggerPrice: BigDecimal,
+    targetPrice: BigDecimal,
+    amount: BigDecimal
+)
+class ORDERs(tag: Tag)
+    extends Table[
+      ORDER
+    ](tag, "ORDERS") {
+  def orderUUID: Rep[String] = column[String]("ORDER_UUID", O.PrimaryKey, O.Unique)
+  def exchangeName: Rep[String] = column[String]("EXCHANGE")
+  def ticker: Rep[String] = column[String]("TICKER")
+  def orderType: Rep[Int] = column[Int]("ORDER_TYPE")
+  def triggerPrice: Rep[BigDecimal] = column[BigDecimal]("TRIGGER_PRICE")
+  def targetPrice: Rep[BigDecimal] = column[BigDecimal]("TARGET_PRICE")
+  def amount: Rep[BigDecimal] = column[BigDecimal]("AMOUNT")
+
+  def * : ProvenShape[ORDER] = (
+    orderUUID,
+    exchangeName,
+    ticker,
+    orderType,
+    triggerPrice,
+    targetPrice,
+    amount
+  ).<>(
+    (ORDER.apply _).tupled,
+    (order: ORDER) =>
+      Some(
+        (
+          order.orderUUID,
+          order.exchangeName,
+          order.ticker,
+          order.orderType,
+          order.triggerPrice,
+          order.targetPrice,
+          order.amount
+        )
+      )
+  )
+}
+
+// Declare the TableQuerys
+val apiKeysTable = TableQuery(new APIKEYs(_))
+val orderTable = TableQuery(new ORDERs(_))
+val dailyDataTable = TableQuery(new DAILYDATAs(_))
+
+object sqlManager {
+
+  createFileIfNotExists()
+  val db = Database.forURL(
+    url = s"jdbc:sqlite:database.db",
+    driver = "org.sqlite.JDBC"
+  )
+
+  def getAPIKEY(exName: String = "BINANCE"): API = {
+    val result = Await.result(
+      db.run(apiKeysTable.filter(_.exchangeName === exName).result),
+      1.minute
+    )
+    result.headOption.getOrElse(API("NONE", "NONE", "NONE"))
+  }
+
+  def upsertAPIKEY(api: API): Boolean = {
+    val updated = apiKeysTable.insertOrUpdate(api)
+    Await.result(db.run(updated), 1.minute) > 0
+  }
+
+  def getOrders(exchangeName: String): Map[String,ORDER] = {
+    val result = Await.result(db.run(orderTable.result), 1.minute)
+    result.filter(_.exchangeName == exchangeName).zipWithIndex.map((item,index) => (index.toString -> item)).toMap
+  }
+
+  def upsertOrder(order: ORDER): Boolean = {
+    val updated = orderTable.insertOrUpdate(order)
+    Await.result(db.run(updated), 1.minute) > 0
+  }
+
+  def deleteOrder(order: ORDER): Boolean = {
+    val deleteAction = orderTable.filter(_.orderUUID === order.orderUUID).delete
+    Await.result(db.run(deleteAction), 1.minute) > 0
+  }
+
+  def getDailyData(date: LocalDate): DAILYDATA = {
+    val dateString = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+    val query = dailyDataTable.filter(_.date === dateString.toInt)
+    val result = Await.result(db.run(query.result.headOption), 1.minute)
+
+    result.getOrElse {
+      val dailyData = DAILYDATA(
+        date = dateString.toInt,
+        totalBalance = 0,
+        tradeNum = 0,
+        dailyPNL = 0
+      )
+      upsertDailyData(dailyData)
+      dailyData
+    }
+  }
+
+  def upsertDailyData(data: DAILYDATA): Boolean = {
+    val updated = dailyDataTable.insertOrUpdate(data)
+    Await.result(db.run(updated), 1.minute) > 0
+  }
+
+  def createFileIfNotExists(): Unit = {
+    var targetDestination = new File("./database.db")
+
+    if !targetDestination.exists() then {
+      var sourceDestination =
+        getClass.getClassLoader.getResourceAsStream("data.db");
+      Files.copy(sourceDestination, Paths.get("database.db"))
+    }
+  }
+}
