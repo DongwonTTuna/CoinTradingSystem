@@ -41,18 +41,7 @@ object MarketService {
       }
 
       def printOrderBookAsChart(bidsPrice : List[BigDecimal], bidsAmount : List[BigDecimal], asksPrice : List[BigDecimal],asksAmount : List[BigDecimal]): Unit = {
-        def rotateLeft(matrix: List[List[String]]): List[List[String]] = {
-          val numRows = matrix.length
-          val numCols = matrix.headOption.map(_.length).getOrElse(0)
-          val result = Array.fill(numCols, numRows)("")
-          for {
-            i <- 0 until numRows
-            j <- 0 until numCols
-          } result(numCols - j - 1)(i) = matrix(i)(j)
-          result.map(_.toList).toList
-        }
 
-        
         val prices = bidsPrice ++ asksPrice
         val amounts = bidsAmount ++ asksAmount
 
