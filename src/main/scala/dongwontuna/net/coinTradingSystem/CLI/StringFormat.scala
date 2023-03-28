@@ -72,7 +72,7 @@ object StringFormat {
               |
               | Symbol : """.stripMargin)
         
-         val selectedSymbol = StdIn.readLine
+         val selectedSymbol = StdIn.readLine.toUpperCase()
 
         exClass.instruments.get(selectedSymbol) match {
           case None => symbolsString = mkString(selectedSymbol)

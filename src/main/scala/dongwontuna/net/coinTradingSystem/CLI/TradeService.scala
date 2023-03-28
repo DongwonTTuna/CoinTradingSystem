@@ -47,16 +47,16 @@ object TradeService {
         val selectedNum = StdIn.readLine
         selectedNum match {
             case "0"|"1"|"2"|"3" => return tempOrder = tempOrder.copy(orderType = selectedNum.toInt)
-            case _ => clearTerminal(); println(numberNoExistString)
+            case _ => clearTerminal(); println(valueNoExistString)
         }
       }
     }
 
     def editPrice(typeOfPrice: DECIMAL_TYPE): Unit = {
       while true do {
-        val currentPrice: String = exClass.getCurrentTicker(tempOrder.ticker) match {
+        val currentPrice: String = exClass.getInstrument(tempOrder.ticker) match {
           case None => "NONE"
-          case Some(value) => value.getLast().toString()
+          case Some(value) => exClass.getCurrentTicker(value).getLast().toString()
         }
 
         val stringText: String = typeOfPrice match {
@@ -85,7 +85,7 @@ object TradeService {
                                       case TRIGGER_PRICE => return tempOrder = tempOrder.copy(triggerPrice = value)
                                       case AMOUNT => return tempOrder = tempOrder.copy(amount = value)
                                     }
-          case _ => clearTerminal(); println(numberNoExistString)
+          case _ => clearTerminal(); println(valueNoExistString)
         }
         
         
@@ -121,7 +121,7 @@ object TradeService {
         case "5" => clearTerminal(); editPrice(AMOUNT)
         case "6" => clearTerminal(); return Some(tempOrder)
         case "7" => clearTerminal(); return None
-        case _   => clearTerminal(); println(numberNoExistString)
+        case _   => clearTerminal(); println(valueNoExistString)
     }
     None
   }

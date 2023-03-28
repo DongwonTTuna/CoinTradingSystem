@@ -40,5 +40,4 @@ class AnExchange(exName: Class[_ <: Exchange]) {
     marketDataService.getTrades(ticker)
   }
 
-
 }

@@ -11,12 +11,14 @@ import dongwontuna.net.coinTradingSystem.Main
 import dongwontuna.net.coinTradingSystem.ORDER
 import dongwontuna.net.coinTradingSystem.types.EXCHANGE._
 import dongwontuna.net.coinTradingSystem.CLI._
+import concurrent.duration.DurationInt
 import java.util.UUID
 
 import dongwontuna.net.coinTradingSystem.types.EXCHANGE
-def clearTerminal() = print("\u001b[2J\u001b[H")
-val numberNoExistString = "=============ERROR=============\n\nPlease enter the valid Number.\n\n=============ERROR=============\n\n"
 
+
+def clearTerminal() = print("\u001b[2J\u001b[H")
+val valueNoExistString = "=============ERROR=============\n\nPlease enter the valid Value.\n\n=============ERROR=============\n\n"
 val orderString = s"""
         || Num |  Symbol  |  Type  |  triggerPrice  |  targetPrice  |   amount   |
         |=-----------------------------------------------------------------------="""
@@ -67,7 +69,7 @@ object CLIMenu {
         case "3" => launchExchange(Main.Exchanges.get(HUOBI).get)
         case "4" => launchExchange(Main.Exchanges.get(KUCOIN).get)
         case "5" => return;
-        case _   => println(numberNoExistString)
+        case _   => println(valueNoExistString)
       }
     }
   }
@@ -100,7 +102,7 @@ object CLIMenu {
 
     while true do {
       val menuString =
-        StringFormat.makeMenuString(exClass.Name.toLowerCase.capitalize, "Menu")
+        StringFormat.makeMenuString("Menu")
       clearTerminal()
       print(s"""
       |$menuString
@@ -126,7 +128,7 @@ object CLIMenu {
   }
 
   def tradeServiceFunc(): Unit = {
-    var menuString = StringFormat.makeMenuString(exName, "Trade Service Menu")
+    var menuString = StringFormat.makeMenuString("Trade Service Menu")
     while true do {
       print(s"""
       |$menuString
@@ -147,11 +149,11 @@ object CLIMenu {
         case "3" => clearTerminal(); TradeService.addOrder()
         case "4" => clearTerminal(); TradeService.deleteOrder()
         case "5" => return;
-        case _ => clearTerminal(); println(numberNoExistString)
+        case _ => clearTerminal(); println(valueNoExistString)
     }
   }
   def marketServiceFunc(): Unit = {
-    val menuString = StringFormat.makeMenuString(exName, "Market Service Menu")
+    val menuString = StringFormat.makeMenuString("Market Service Menu")
     while true do {
       print(s"""$menuString
       |
@@ -168,16 +170,16 @@ object CLIMenu {
 
       selectedNum match {
         case "1" => clearTerminal(); MarketService.getInformation()
-        case "2" => clearTerminal();MarketService.getExchangeInformation()
-        case "3" => clearTerminal();MarketService.getOrderBookInformation()
-        case "4" => clearTerminal();MarketService.getRecentTrades()
+        case "2" => clearTerminal(); MarketService.getExchangeInformation()
+        case "3" => clearTerminal(); MarketService.getOrderBookInformation()
+        case "4" => clearTerminal(); MarketService.getRecentTrades()
         case "5" => return
-        case _   => clearTerminal();println(numberNoExistString)
+        case _   => clearTerminal();println(valueNoExistString)
       }
     }
   }
   def accountServiceFunc(): Unit = {
-    val menuString = StringFormat.makeMenuString(exName, "Account Service Menu")
+    val menuString = StringFormat.makeMenuString("Account Service Menu")
     while true do {
       print(s"""$menuString
       |
@@ -196,9 +198,10 @@ object CLIMenu {
         case "2" => clearTerminal();MarketService.getExchangeInformation()
         case "3" => clearTerminal();MarketService.getOrderBookInformation()
         case "4" => return
-        case _   => clearTerminal();println(numberNoExistString)
+        case _   => clearTerminal();println(valueNoExistString)
       }
     }
 
   }
+
 }
