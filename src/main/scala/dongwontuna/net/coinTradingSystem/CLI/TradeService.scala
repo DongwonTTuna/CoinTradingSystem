@@ -10,48 +10,30 @@ import org.knowm.xchange.instrument.Instrument
 import dongwontuna.net.coinTradingSystem.AnExchange
 import dongwontuna.net.coinTradingSystem.types.EXCHANGE._
 import dongwontuna.net.coinTradingSystem.types.DECIMAL_TYPE._
+import scala.util.Try
+import scala.util.Failure
+import scala.util.Success
+
 object TradeService {
 
+  var exClass: AnExchange = _
+  var exName: String = _
+    
+  def initialize(exClass: AnExchange): Unit = {
+        this.exClass = exClass
+        this.exName = exClass.Name
+  }
+
+
   def handleOrder(
-      anExchange: AnExchange,
       order: ORDER,
       mode: String
   ): Option[ORDER] = {
     var tempOrder: ORDER = order
 
     def editSymbol(): Unit = {
-      val symbols = anExchange.instruments
-      var symbolsString =
-        symbols.keys.grouped(5).map(_.mkString(" ")).mkString("\n")
-      while true do {
-        clearTerminal()
-        print(s"""Symbol List
-      | 
-      | $symbolsString
-      |
-      |
-      | You can search for symbols with enter the start of the symbol
-      |
-      |
-      |
-      | Please enter the Symbol : """.stripMargin)
-        val selectedSymbol = StdIn.readLine
-        try {
-          symbols.get(selectedSymbol) match {
-            case None => throw new Exception("Symbol not found")
-            case Some(value) =>
-              return tempOrder = tempOrder.copy(ticker = selectedSymbol)
-          }
-        } catch {
-          case e: Exception => {
-            symbolsString = symbols.keys
-              .filter(_.startsWith(selectedSymbol))
-              .grouped(5)
-              .map(_.mkString(" "))
-              .mkString("\n")
-          }
-        }
-      }
+        var selectedSymbol: String = StringFormat.searchInstruments().toString
+        return tempOrder = tempOrder.copy(ticker = selectedSymbol)
     }
     def editOrderType(): Unit = {
       while true do {
@@ -61,25 +43,23 @@ object TradeService {
       | 2 : Take Profit
       | 3 : Loss Cut
       | 
-      | Please enter the order type : """.stripMargin)
-        try {
-          val selectedNum = StdIn.readInt
-          return tempOrder = tempOrder.copy(orderType = selectedNum)
-        } catch {
-          case e: Exception => println("Invalid Input")
+      | Order Type : """.stripMargin)
+        val selectedNum = StdIn.readLine
+        selectedNum match {
+            case "0"|"1"|"2"|"3" => return tempOrder = tempOrder.copy(orderType = selectedNum.toInt)
+            case _ => clearTerminal(); println(numberNoExistString)
         }
       }
-
     }
 
     def editPrice(typeOfPrice: DECIMAL_TYPE): Unit = {
       while true do {
-        val currentPrice: String = anExchange.getCurrentTicker(tempOrder.ticker) match {
+        val currentPrice: String = exClass.getCurrentTicker(tempOrder.ticker) match {
           case None => "NONE"
           case Some(value) => value.getLast().toString()
         }
 
-        val stringText = typeOfPrice match {
+        val stringText: String = typeOfPrice match {
           case TARGET_PRICE  => "Target Price"
           case TRIGGER_PRICE => "Trigger Price"
           case AMOUNT => "Amount"
@@ -89,27 +69,34 @@ object TradeService {
               | 
               ${if typeOfPrice != AMOUNT then s"| currentPrice : ${currentPrice}" else ""}
               |
-              | Please enter the $stringText : """.stripMargin)
-        
-        val selectedNum = StdIn.readLine()
+              | $stringText : """.stripMargin)
 
-        try {
-          typeOfPrice match {
-            case TARGET_PRICE => return tempOrder = tempOrder.copy(targetPrice = BigDecimal(selectedNum))
-            case TRIGGER_PRICE => return tempOrder = tempOrder.copy(triggerPrice = BigDecimal(selectedNum))
-            case AMOUNT => return tempOrder = tempOrder.copy(amount = BigDecimal(selectedNum))
-          }
-        } catch {
-          case e: Exception => println("Invalid Input")
+        val input = StdIn.readLine()
+        
+        val result = Try(BigDecimal(input)) match {
+          case Success(value) => value
+          case Failure(value: NumberFormatException) => value
+          case Failure(exception) => throw exception
         }
+      
+        result match {
+          case value: BigDecimal => typeOfPrice match {
+                                      case TARGET_PRICE => return tempOrder = tempOrder.copy(targetPrice = value)
+                                      case TRIGGER_PRICE => return tempOrder = tempOrder.copy(triggerPrice = value)
+                                      case AMOUNT => return tempOrder = tempOrder.copy(amount = value)
+                                    }
+          case _ => clearTerminal(); println(numberNoExistString)
+        }
+        
+        
       }
     }
 
     while true do {
       clearTerminal()
       var menuString =
-        StringFormat.makeMenuString(tempOrder.exchangeName, mode, orderString)
-      println(s"""$menuString
+        StringFormat.makeMenuString(mode, orderString)
+      print(s"""$menuString
       ${StringFormat.makeOrderString(List(tempOrder))}
       |
       | 1. Edit Symbol
@@ -120,7 +107,9 @@ object TradeService {
       |
       | 6. Save and Exit
       | 7. Discard all and Exit
-      """.stripMargin)
+      |
+      | Number : """.stripMargin)
+
 
       var userInputed = StdIn.readLine()
 
@@ -137,12 +126,11 @@ object TradeService {
     None
   }
 
-  def addOrder(anExchange: AnExchange, exName: String): Unit = {
+  def addOrder(): Unit = {
     val newOrder = handleOrder(
-      anExchange,
       new ORDER(
         UUID.randomUUID().toString(),
-        exName,
+        exClass.Name,
         "NONE",
         0,
         BigDecimal("0"),
@@ -161,10 +149,9 @@ object TradeService {
     else println("cannot create the order")
   }
 
-  def getCurrentOrder(exName: String): Unit = {
+  def getCurrentOrder(): Unit = {
     val orders: Map[String, ORDER] = sqlManager.getOrders(exName)
     val menuString = StringFormat.makeMenuString(
-      exName,
       "Open Orders",
       orderString
     )
@@ -174,10 +161,10 @@ object TradeService {
                 """.stripMargin)
   }
 
-  def editOrder(anExchange: AnExchange, exName: String): Unit = {
+  def editOrder(): Unit = {
 
     val orders: Map[String, ORDER] = sqlManager.getOrders(exName)
-    var menuString: String = StringFormat.makeMenuString(exName, "Edit Order", orderString)
+    var menuString: String = StringFormat.makeMenuString("Edit Order", orderString)
    
     print(s"""$menuString
           ${StringFormat.makeOrderString(orders.values.toList)}
@@ -190,7 +177,7 @@ object TradeService {
       case Some(value) => value
     }
 
-    val result = handleOrder(anExchange, selectedOrder, "Edit Order") match {
+    val result = handleOrder(selectedOrder, "Edit Order") match {
       case None        => return println("You cancelled the order")
       case Some(value) => value
     }
@@ -200,10 +187,10 @@ object TradeService {
 
   }
 
-  def deleteOrder(exName: String): Unit = {
+  def deleteOrder(): Unit = {
     while true do {
       val orders: Map[String, ORDER] = sqlManager.getOrders(exName)
-      var menuString: String = StringFormat.makeMenuString(exName, "Delete Order", orderString)
+      var menuString: String = StringFormat.makeMenuString("Delete Order", orderString)
       
       print(s"""$menuString
             ${StringFormat.makeOrderString(orders.values.toList)}
@@ -212,6 +199,7 @@ object TradeService {
             |Which Order do you want to delete? : """.stripMargin)
 
       val selectedOrder: Option[ORDER] = orders.get(StdIn.readLine())
+
       selectedOrder match {
         case None => clearTerminal(); println("Invalid number inputed")
         case Some(value) => {

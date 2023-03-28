@@ -1,9 +1,21 @@
 package dongwontuna.net.coinTradingSystem.CLI
 
 import dongwontuna.net.coinTradingSystem.ORDER
+import dongwontuna.net.coinTradingSystem.AnExchange
+import scala.io.StdIn
+import org.knowm.xchange.instrument.Instrument
 
 object StringFormat {
-  def makeMenuString(exName: String, menuText: String, thirdText: String = ""): String = {
+
+  var exClass: AnExchange = _
+  var exName: String = _
+
+  def initialize(exClass: AnExchange): Unit = {
+      this.exClass = exClass
+      this.exName = exClass.Name
+  }
+
+  def makeMenuString(menuText: String, thirdText: String = ""): String = {
     s"=--- ${exName.toLowerCase.capitalize} $menuText".padTo(72, "-").mkString("") + "=" + thirdText
   }
   
@@ -29,6 +41,47 @@ object StringFormat {
     formattedOrders.mkString("\n=-----------------------------------------------------------------------=\n") + "\n=-----------------------------------------------------------------------="
   }
 
+  def searchInstruments(): Instrument = {
+
+      val symbols = exClass.instruments
+
+      def mkString(text: String = ""): String = {
+        if !text.isBlank then {
+              symbols.keys
+                  .filter(_.startsWith(text))
+                  .grouped(5)
+                  .map(_.mkString(" "))
+                  .mkString("\n")
+        } else {
+          symbols.keys.grouped(5).map(_.mkString(" ")).mkString("\n")
+        }
+      }
+
+      var symbolsString = mkString()
+      
+      while true do {
+        clearTerminal()
+        print(s"""Symbol List
+              | 
+              | $symbolsString
+              |
+              |
+              | You can search for symbols with enter the start of the symbol
+              |
+              |
+              |
+              | Symbol : """.stripMargin)
+        
+         val selectedSymbol = StdIn.readLine
+
+        exClass.instruments.get(selectedSymbol) match {
+          case None => symbolsString = mkString(selectedSymbol)
+          case Some(value) => return value
+        } 
+      }
+      throw new Exception("Could not return the Instrument while searchInstruments")
+  }
+
   def padLeft(s: String, num: Int): String = {
     s.reverse.padTo(num, ' ').reverse
   }
@@ -37,4 +90,6 @@ object StringFormat {
     if diff % 2 == 0 then (" " * (diff / 2)) + s + (" " * (diff / 2))
     else " " * ((diff - 1) / 2) + s + " " * ((diff - 1) / 2 + 1)
   }
+
+
 }
