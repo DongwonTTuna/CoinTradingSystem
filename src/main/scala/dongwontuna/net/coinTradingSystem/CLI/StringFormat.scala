@@ -8,8 +8,8 @@ import org.knowm.xchange.instrument.Instrument
 def clearTerminal() = print("\u001b[2J\u001b[H")
 val valueNoExistString = "=============ERROR=============\n\nPlease enter the valid Value.\n\n=============ERROR=============\n\n"
 val orderString = s"""
-        || Num |  Symbol  |  Type  |  triggerPrice  |  targetPrice  |   amount   |
-        |=-----------------------------------------------------------------------="""
+        || Num |  Symbol  |  Type  |  triggerPrice  |  targetPrice  |   amount   | orderType |
+        |=-----------------------------------------------------------------------------------="""
 
 object StringFormat {
 
@@ -22,15 +22,15 @@ object StringFormat {
   }
 
   def makeMenuString(menuText: String, thirdText: String = ""): String = {
-    s"=--- ${exName.toLowerCase.capitalize} $menuText".padTo(72, "-").mkString("") + "=" + thirdText
+    s"=------- ${exName.toLowerCase.capitalize} $menuText".padTo(84, "-").mkString("") + "=" + thirdText
   }
   
   def makeOrderString(orders: List[ORDER]): String = {
     if (orders.isEmpty) {
-      return """|||                                                                       |
-                |||                                  NONE                                 |
-                |||                                                                       |
-                |=-----------------------------------------------------------------------=""".stripMargin
+      return """|||                                                                                   |
+                |||                                         NONE                                      |
+                |||                                                                                   |
+                |=-----------------------------------------------------------------------------------=""".stripMargin
     }
 
     val formattedOrders = orders.zipWithIndex.map { case (order, index) =>
@@ -40,11 +40,15 @@ object StringFormat {
         case 2 => "TakeP"
         case 3 => "LossC"
       }
+      val isMarket = order.ismarket match {
+        case true => "Market"
+        case false => "Limit"
+      }
 
-      s"||${padMiddle(index.toString, 5)}|${padMiddle(order.ticker, 10)}|${padMiddle(orderType, 8)}|${padLeft(order.triggerPrice.toString, 16)}|${padLeft(order.targetPrice.toString, 15)}|${padLeft(order.amount.toString, 12)}|"
+      s"||${padMiddle(index.toString, 5)}|${padMiddle(order.ticker, 10)}|${padMiddle(orderType, 8)}|${padLeft(order.triggerPrice.toString, 16)}|${padLeft(order.targetPrice.toString, 15)}|${padLeft(order.amount.toString, 12)}|${padMiddle(isMarket,11)}|"
     }
 
-    formattedOrders.mkString("\n=-----------------------------------------------------------------------=\n") + "\n=-----------------------------------------------------------------------="
+    formattedOrders.mkString("\n=-----------------------------------------------------------------------------------=\n") + "\n=-----------------------------------------------------------------------------------="
   }
 
   def searchInstruments(): Instrument = {

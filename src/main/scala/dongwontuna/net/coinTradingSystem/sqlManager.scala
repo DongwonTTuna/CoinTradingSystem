@@ -59,7 +59,8 @@ case class ORDER(
     orderType: Int,
     triggerPrice: BigDecimal,
     targetPrice: BigDecimal,
-    amount: BigDecimal
+    amount: BigDecimal,
+    ismarket: Boolean
 )
 class ORDERs(tag: Tag)
     extends Table[
@@ -72,6 +73,7 @@ class ORDERs(tag: Tag)
   def triggerPrice: Rep[BigDecimal] = column[BigDecimal]("TRIGGER_PRICE")
   def targetPrice: Rep[BigDecimal] = column[BigDecimal]("TARGET_PRICE")
   def amount: Rep[BigDecimal] = column[BigDecimal]("AMOUNT")
+  def ismarket: Rep[Boolean] = column[Boolean]("ISMARKET")
 
   def * : ProvenShape[ORDER] = (
     orderUUID,
@@ -80,7 +82,8 @@ class ORDERs(tag: Tag)
     orderType,
     triggerPrice,
     targetPrice,
-    amount
+    amount,
+    ismarket
   ).<>(
     (ORDER.apply _).tupled,
     (order: ORDER) =>
@@ -92,7 +95,8 @@ class ORDERs(tag: Tag)
           order.orderType,
           order.triggerPrice,
           order.targetPrice,
-          order.amount
+          order.amount,
+          order.ismarket
         )
       )
   )

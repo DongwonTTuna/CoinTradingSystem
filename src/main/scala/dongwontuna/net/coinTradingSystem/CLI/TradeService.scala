@@ -35,21 +35,37 @@ object TradeService {
         var selectedSymbol: String = StringFormat.searchInstruments().toString
         return tempOrder = tempOrder.copy(ticker = selectedSymbol)
     }
-    def editOrderType(): Unit = {
+    def editType(): Unit = {
       while true do {
-        print(s"""Order Type
-      | 0 : Buy
-      | 1 : Sell
-      | 2 : Take Profit
-      | 3 : Loss Cut
-      | 
-      | Order Type : """.stripMargin)
+        print(s"""Type of the order
+              | 0 : Buy
+              | 1 : Sell
+              | 2 : Take Profit
+              | 3 : Loss Cut
+              | 
+              | Order Type : """.stripMargin)
         val selectedNum = StdIn.readLine
         selectedNum match {
             case "0"|"1"|"2"|"3" => return tempOrder = tempOrder.copy(orderType = selectedNum.toInt)
             case _ => clearTerminal(); println(valueNoExistString)
         }
       }
+    }
+    
+    def editOrderType() : Unit = {
+      while true do {
+        print(s"""Type of the comfirmation
+              | 0 : Limit
+              | 1 : Market
+              """.stripMargin)
+        val selectedNum = StdIn.readLine
+        selectedNum match {
+          case "0" => tempOrder = tempOrder.copy(ismarket = false)
+          case "1" => tempOrder = tempOrder.copy(ismarket = true)
+          case _ => println(valueNoExistString)
+        }
+      }
+
     }
 
     def editPrice(typeOfPrice: DECIMAL_TYPE): Unit = {
@@ -104,9 +120,10 @@ object TradeService {
       | 3. Edit triggerPrice
       | 4. Edit targetPrice
       | 5. Edit amount
+      | 6. Edit order Confirmation Type
       |
-      | 6. Save and Exit
-      | 7. Discard all and Exit
+      | 7. Save and Exit
+      | 8. Discard all and Exit
       |
       | Number : """.stripMargin)
 
@@ -115,12 +132,13 @@ object TradeService {
 
       userInputed match
         case "1" => clearTerminal(); editSymbol()
-        case "2" => clearTerminal(); editOrderType()
+        case "2" => clearTerminal(); editType()
         case "3" => clearTerminal(); editPrice(TRIGGER_PRICE)
         case "4" => clearTerminal(); editPrice(TARGET_PRICE)
         case "5" => clearTerminal(); editPrice(AMOUNT)
-        case "6" => clearTerminal(); return Some(tempOrder)
-        case "7" => clearTerminal(); return None
+        case "6" => clearTerminal(); editOrderType()
+        case "7" => clearTerminal(); return Some(tempOrder)
+        case "8" => clearTerminal(); return None
         case _   => clearTerminal(); println(valueNoExistString)
     }
     None
@@ -135,7 +153,8 @@ object TradeService {
         0,
         BigDecimal("0"),
         BigDecimal("0"),
-        BigDecimal("0")
+        BigDecimal("0"),
+        false
       ),
       "New Order"
     )
