@@ -6,6 +6,9 @@ import dongwontuna.net.coinTradingSystem.types.EXCHANGE._
 import dongwontuna.net.coinTradingSystem.types.DECIMAL_TYPE._
 import dongwontuna.net.coinTradingSystem.types.EXCHANGE
 import org.knowm.xchange.instrument.Instrument
+import org.knowm.xchange.dto.trade.MarketOrder
+import org.knowm.xchange.dto.Order.OrderType
+import org.knowm.xchange.dto.trade.LimitOrder
 
 object Trade {
   
@@ -33,47 +36,69 @@ object Trade {
     }
 
 
-    def buyMarket(ticker: Instrument) : Unit = {
-
+    def buyMarket(order: ORDER) : Unit = {
+        val exClass = getExclass(order)
+        val instrument = exClass.getInstrument(order.ticker).get
+        val newOrder : MarketOrder = MarketOrder(OrderType.BID,java.math.BigDecimal(order.amount.toString),instrument)
+        exClass.tradeService.placeMarketOrder(newOrder)
     }
 
-    def sellMarket(ticker: Instrument) : Unit = {}
+    def sellMarket(order: ORDER) : Unit = {
+        val exClass = getExclass(order)
+        val instrument = exClass.getInstrument(order.ticker).get
+        val newOrder : MarketOrder = MarketOrder(OrderType.ASK,java.math.BigDecimal(order.amount.toString),instrument)
+        exClass.tradeService.placeMarketOrder(newOrder)
+    }
     
-    def buyLimit(ticker: Instrument) : Unit = {
+    def buyLimit(order: ORDER) : Unit = {
+        val exClass = getExclass(order)
+        val instrument = exClass.getInstrument(order.ticker).get
+        val newOrder : LimitOrder = LimitOrder(OrderType.BID, java.math.BigDecimal(order.amount.toString),instrument,null,null,java.math.BigDecimal(order.triggerPrice.toString))
+        exClass.tradeService.placeLimitOrder(newOrder)
+    }  
 
-    }
-
-    def sellLimit(ticker: Instrument) : Unit = {
-
+    def sellLimit(order: ORDER) : Unit = {
+        val exClass = getExclass(order)
+        val instrument = exClass.getInstrument(order.ticker).get
+        val newOrder : LimitOrder = LimitOrder(OrderType.ASK, java.math.BigDecimal(order.amount.toString),instrument,null,null,java.math.BigDecimal(order.triggerPrice.toString))
+        exClass.tradeService.placeLimitOrder(newOrder)
     }
 
     def takeProfit(order : ORDER) : Unit = {
-        var tempOrder = order.copy()
+        
         val currentPrice : BigDecimal = getCurrentPrice(order)
 
-        def checkTriggerPrice() : Unit = {
-
-        }
-
         def checkTargetPrice() : Unit = {
-            
+            if order.targetPrice.compare(currentPrice) < 1
+            then sqlManager.upsertOrder(order.copy(targetPrice = 0))
         }
 
+        def checkTriggerPrice() : Unit = {
+            if order.targetPrice.compare(currentPrice) > 0
+            then {
+                order.ismarket match {
+                    case true => sellMarket(order)
+                    case false => sellLimit(order)
+                }
+                sqlManager.deleteOrder(order)
+            }
+        }
 
+        if order.targetPrice.compare(0) == 0
+        then checkTriggerPrice()
+        else checkTargetPrice()
     }
 
     def lossCut(order : ORDER) : Unit = { 
-        var tempOrder = order.copy()
         val currentPrice : BigDecimal = getCurrentPrice(order)
-        def checkTriggerPrice() : Unit = {
-
+        if order.triggerPrice.compare(currentPrice) > 0
+        then {
+            order.ismarket match {
+                case true => sellMarket(order)
+                case false => sellLimit(order)
+            }
+            sqlManager.deleteOrder(order)
         }
-
-        def checkTargetPrice() : Unit = {
-            
-        }
-        
-
     }
 
 
@@ -81,16 +106,24 @@ object Trade {
         val currentPrice : BigDecimal = getCurrentPrice(order)
         if order.triggerPrice.compare(currentPrice) > -1
         then {
-            val exClass = getExclass(order)
-            //exClass.tradeService.placeLimitOrder()
-
+            order.ismarket match {
+                case true => buyMarket(order)
+                case false => buyLimit(order)
+            }
+            sqlManager.deleteOrder(order)
         }
-        
-
     }
     
     def sell(order:ORDER) : Unit = {
         val currentPrice : BigDecimal = getCurrentPrice(order)
+        if order.triggerPrice.compare(currentPrice) < 1
+        then {
+            order.ismarket match {
+                case true => sellMarket(order)
+                case false => sellLimit(order)
+            }
+            sqlManager.deleteOrder(order)
+        }
     }
 
 
@@ -112,7 +145,7 @@ object Trade {
         while true do {
             updateOrders()
             tradeTasks()
-            Thread.sleep(1000)
+            Thread.sleep(5000)
         }
     }
 }
