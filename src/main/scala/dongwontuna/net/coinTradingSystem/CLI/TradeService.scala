@@ -38,12 +38,13 @@ object TradeService {
     def editType(): Unit = {
       while true do {
         print(s"""Type of the order
+              |
               | 0 : Buy
               | 1 : Sell
               | 2 : Take Profit
               | 3 : Loss Cut
               | 
-              | Order Type : """.stripMargin)
+              | Type : """.stripMargin)
         val selectedNum = StdIn.readLine
         selectedNum match {
             case "0"|"1"|"2"|"3" => return tempOrder = tempOrder.copy(orderType = selectedNum.toInt)
@@ -55,13 +56,15 @@ object TradeService {
     def editOrderType() : Unit = {
       while true do {
         print(s"""Type of the comfirmation
+              |
               | 0 : Limit
               | 1 : Market
-              """.stripMargin)
+              |
+              | Order Type : """.stripMargin)
         val selectedNum = StdIn.readLine
         selectedNum match {
-          case "0" => tempOrder = tempOrder.copy(ismarket = false)
-          case "1" => tempOrder = tempOrder.copy(ismarket = true)
+          case "0" => return tempOrder = tempOrder.copy(ismarket = false)
+          case "1" => return tempOrder = tempOrder.copy(ismarket = true)
           case _ => println(valueNoExistString)
         }
       }
