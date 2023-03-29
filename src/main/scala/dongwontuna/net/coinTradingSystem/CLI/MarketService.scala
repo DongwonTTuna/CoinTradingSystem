@@ -26,6 +26,9 @@ object MarketService {
 
   }
 
+  
+
+
   def getExchangeInformation(): Unit = {
     val description =exClass.Exchange.getExchangeSpecification().getExchangeDescription()
     
@@ -60,8 +63,10 @@ object MarketService {
 
         val minY = bidsAmount.min
         val maxY = bidsAmount.max
+        val middleY = maxY.`+`(minY)./(2).setScale(15, BigDecimal.RoundingMode.HALF_UP)
         val minX = bidsPrice.min
         val maxX = bidsPrice.max
+        val middleX = maxX.`+`(minX)./(2).setScale(15, BigDecimal.RoundingMode.HALF_UP)
         val XtotalSize = prices.length 
         val YtotalSize = 40
         val oneTickSize = (maxY.`-`(minY))./(40).setScale(15, BigDecimal.RoundingMode.HALF_UP)
@@ -88,7 +93,6 @@ object MarketService {
         
         // TODO: 뎁스에 가격 및 볼륨 추가하기
 
-
         for (y <- (YtotalSize-1) to 0 by -1) {
           var tempString = ""
           for (x <- 0 until XtotalSize) {
@@ -96,6 +100,9 @@ object MarketService {
           }
             println(tempString)
         }
+
+        val XyieldValue = XtotalSize - minX.toDouble.toString.length - middleX.toDouble.toString.length  - maxX.toDouble.toString.length + 3
+        println((for x <- 0 until XyieldValue yield if x == 0 then minX.toDouble else if x == XyieldValue/2 - 4 then middleX.toDouble else if x == XyieldValue-1 then maxX.toDouble else " ").mkString(""))
         println("\n\n\n\n\n Press enter to Exit")
       }
       

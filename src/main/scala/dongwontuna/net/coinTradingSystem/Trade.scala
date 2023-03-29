@@ -39,44 +39,44 @@ object Trade {
     }
 
 
-    def buyMarket(order: ORDER) : Unit = {
+    def buyMarket(order: ORDER) : Boolean = {
         val exClass = getExclass(order)
         val instrument = exClass.getInstrument(order.ticker).get
         val newOrder : MarketOrder = MarketOrder(OrderType.BID,java.math.BigDecimal(order.amount.toString),instrument)
         Try(exClass.tradeService.placeMarketOrder(newOrder)) match {
-            case Failure(exception) => print(exception.getMessage)
-            case Success(value) => println(value)
+            case Failure(exception) => print(exception.getMessage); return false
+            case Success(value) => println(value); return true
         }
     }
 
-    def sellMarket(order: ORDER) : Unit = {
+    def sellMarket(order: ORDER) : Boolean = {
         val exClass = getExclass(order)
         val instrument = exClass.getInstrument(order.ticker).get
         val newOrder : MarketOrder = MarketOrder(OrderType.ASK,java.math.BigDecimal(order.amount.toString),instrument)
         Try(exClass.tradeService.placeMarketOrder(newOrder)) match {
-            case Failure(exception) => print(exception.getMessage)
-            case Success(value) => println(value)
+            case Failure(exception) => print(exception.getMessage); return false
+            case Success(value) => println(value); return true
         }
     }
     
-    def buyLimit(order: ORDER) : Unit = {
+    def buyLimit(order: ORDER) : Boolean = {
         val exClass = getExclass(order)
         val instrument = exClass.getInstrument(order.ticker).get
         val newOrder : LimitOrder = LimitOrder(OrderType.BID, java.math.BigDecimal(order.amount.toString),instrument,null,null,java.math.BigDecimal(order.triggerPrice.toString))
         Try(exClass.tradeService.placeLimitOrder(newOrder)) match {
-            case Failure(exception) => print(exception.getMessage)
-            case Success(value) => println(value)
+            case Failure(exception) => print(exception.getMessage); return false
+            case Success(value) => println(value); return true
         }
     }  
 
-    def sellLimit(order: ORDER) : Unit = {
+    def sellLimit(order: ORDER) : Boolean = {
         println("Sell Limit")
         val exClass = getExclass(order)
         val instrument = exClass.getInstrument(order.ticker).get
         val newOrder : LimitOrder = LimitOrder(OrderType.ASK, java.math.BigDecimal(order.amount.toString),instrument,null,null,java.math.BigDecimal(order.triggerPrice.toString))
         Try(exClass.tradeService.placeLimitOrder(newOrder)) match {
-            case Failure(exception) => print(exception.getMessage)
-            case Success(value) => println(value)
+            case Failure(exception) => print(exception.getMessage); return false
+            case Success(value) => println(value); return true
         }
     }
 
@@ -92,11 +92,11 @@ object Trade {
         def checkTriggerPrice() : Unit = {
             if order.targetPrice.compare(currentPrice) > 0
             then {
-                order.ismarket match {
+                val value :Boolean = order.ismarket match {
                     case true => sellMarket(order)
                     case false => sellLimit(order)
                 }
-                sqlManager.deleteOrder(order)
+                if value == true then sqlManager.deleteOrder(order)
             }
         }
 
@@ -109,11 +109,11 @@ object Trade {
         val currentPrice : BigDecimal = getCurrentPrice(order)
         if order.triggerPrice.compare(currentPrice) > 0
         then {
-            order.ismarket match {
+            val value : Boolean = order.ismarket match {
                 case true => sellMarket(order)
                 case false => sellLimit(order)
             }
-            sqlManager.deleteOrder(order)
+            if value == true then sqlManager.deleteOrder(order)
         }
     }
 
@@ -122,11 +122,11 @@ object Trade {
         val currentPrice : BigDecimal = getCurrentPrice(order)
         if order.triggerPrice.compare(currentPrice) > -1
         then {
-            order.ismarket match {
+            val value : Boolean = order.ismarket match {
                 case true => buyMarket(order)
                 case false => buyLimit(order)
             }
-            sqlManager.deleteOrder(order)
+            if value == true then sqlManager.deleteOrder(order)
         }
     }
     
@@ -134,11 +134,11 @@ object Trade {
         val currentPrice : BigDecimal = getCurrentPrice(order)
         if order.triggerPrice.compare(currentPrice) < 1
         then {
-            order.ismarket match {
+            val value : Boolean = order.ismarket match {
                 case true => sellMarket(order)
                 case false => sellLimit(order)
             }
-            sqlManager.deleteOrder(order)
+            if value == true then sqlManager.deleteOrder(order)
         }
     }
 
