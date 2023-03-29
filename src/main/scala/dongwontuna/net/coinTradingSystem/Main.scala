@@ -30,7 +30,7 @@ object Main {
   val Exchanges: Map[EXCHANGE, AnExchange] = initialize()
 
   def main(args: Array[String]): Unit = {
-    //Trade.startUp()
+    Trade.startUp()
     CLIMenu.mainPage()
   }
 

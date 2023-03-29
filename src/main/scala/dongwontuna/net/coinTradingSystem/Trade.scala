@@ -9,6 +9,9 @@ import org.knowm.xchange.instrument.Instrument
 import org.knowm.xchange.dto.trade.MarketOrder
 import org.knowm.xchange.dto.Order.OrderType
 import org.knowm.xchange.dto.trade.LimitOrder
+import scala.util.Try
+import scala.util.Failure
+import scala.util.Success
 
 object Trade {
   
@@ -40,28 +43,41 @@ object Trade {
         val exClass = getExclass(order)
         val instrument = exClass.getInstrument(order.ticker).get
         val newOrder : MarketOrder = MarketOrder(OrderType.BID,java.math.BigDecimal(order.amount.toString),instrument)
-        exClass.tradeService.placeMarketOrder(newOrder)
+        Try(exClass.tradeService.placeMarketOrder(newOrder)) match {
+            case Failure(exception) => print(exception.getMessage)
+            case Success(value) => println(value)
+        }
     }
 
     def sellMarket(order: ORDER) : Unit = {
         val exClass = getExclass(order)
         val instrument = exClass.getInstrument(order.ticker).get
         val newOrder : MarketOrder = MarketOrder(OrderType.ASK,java.math.BigDecimal(order.amount.toString),instrument)
-        exClass.tradeService.placeMarketOrder(newOrder)
+        Try(exClass.tradeService.placeMarketOrder(newOrder)) match {
+            case Failure(exception) => print(exception.getMessage)
+            case Success(value) => println(value)
+        }
     }
     
     def buyLimit(order: ORDER) : Unit = {
         val exClass = getExclass(order)
         val instrument = exClass.getInstrument(order.ticker).get
         val newOrder : LimitOrder = LimitOrder(OrderType.BID, java.math.BigDecimal(order.amount.toString),instrument,null,null,java.math.BigDecimal(order.triggerPrice.toString))
-        exClass.tradeService.placeLimitOrder(newOrder)
+        Try(exClass.tradeService.placeLimitOrder(newOrder)) match {
+            case Failure(exception) => print(exception.getMessage)
+            case Success(value) => println(value)
+        }
     }  
 
     def sellLimit(order: ORDER) : Unit = {
+        println("Sell Limit")
         val exClass = getExclass(order)
         val instrument = exClass.getInstrument(order.ticker).get
         val newOrder : LimitOrder = LimitOrder(OrderType.ASK, java.math.BigDecimal(order.amount.toString),instrument,null,null,java.math.BigDecimal(order.triggerPrice.toString))
-        exClass.tradeService.placeLimitOrder(newOrder)
+        Try(exClass.tradeService.placeLimitOrder(newOrder)) match {
+            case Failure(exception) => print(exception.getMessage)
+            case Success(value) => println(value)
+        }
     }
 
     def takeProfit(order : ORDER) : Unit = {
