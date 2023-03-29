@@ -111,62 +111,54 @@ object sqlManager {
     driver = "org.sqlite.JDBC"
   )
 
-  def getAPIKEY(exName: String = "BINANCE"): API = {
-    val result = Await.result(
-      db.run(apiKeysTable.filter(_.exchangeName === exName).result),
-      1.minute
-    )
-    result.headOption.getOrElse(API("NONE", "NONE", "NONE"))
+  def getAPIKEY(exName: String = "BINANCE"): Option[API] = {
+    val sqlCommand = apiKeysTable.filter(_.exchangeName === exName).result
+    Await.result(db.run(sqlCommand), 1.minute).headOption
   }
 
   def upsertAPIKEY(api: API): Boolean = {
-    val updated = apiKeysTable.insertOrUpdate(api)
-    Await.result(db.run(updated), 1.minute) > 0
+    val sqlCommand = apiKeysTable.insertOrUpdate(api)
+    Await.result(db.run(sqlCommand), 1.minute) > 0
   }
 
   def getOrders(exchangeName: String): Map[String,ORDER] = {
-    val result = Await.result(db.run(orderTable.result), 1.minute)
-    result.filter(_.exchangeName == exchangeName).zipWithIndex.map((item,index) => (index.toString -> item)).toMap
+    val sqlCommand = orderTable.filter(_.exchangeName === exchangeName).result
+    val result = Await.result(db.run(sqlCommand), 1.minute)
+    result.zipWithIndex.map((item,index) => (index.toString -> item)).toMap
+  }
+
+  def getAllOrders(): List[ORDER] = {
+    Await.result(db.run(orderTable.result),1.minute).toList
   }
 
   def upsertOrder(order: ORDER): Boolean = {
-    val updated = orderTable.insertOrUpdate(order)
-    Await.result(db.run(updated), 1.minute) > 0
+    val sqlCommand = orderTable.insertOrUpdate(order)
+    Await.result(db.run(sqlCommand), 1.minute) > 0
   }
 
   def deleteOrder(order: ORDER): Boolean = {
-    val deleteAction = orderTable.filter(_.orderUUID === order.orderUUID).delete
-    Await.result(db.run(deleteAction), 1.minute) > 0
+    val sqlCommand = orderTable.filter(_.orderUUID === order.orderUUID).delete
+    Await.result(db.run(sqlCommand), 1.minute) > 0
   }
 
   def getDailyData(date: LocalDate): DAILYDATA = {
     val dateString = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
-    val query = dailyDataTable.filter(_.date === dateString.toInt)
-    val result = Await.result(db.run(query.result.headOption), 1.minute)
-
-    result.getOrElse {
-      val dailyData = DAILYDATA(
-        date = dateString.toInt,
-        totalBalance = 0,
-        tradeNum = 0,
-        dailyPNL = 0
-      )
-      upsertDailyData(dailyData)
-      dailyData
+    val sqlCommand = dailyDataTable.filter(_.date === dateString.toInt).result
+    Await.result(db.run(sqlCommand), 1.minute).headOption match {
+      case None => DAILYDATA(dateString.toInt, 0, 0, 0)
+      case Some(value) => value
     }
   }
 
   def upsertDailyData(data: DAILYDATA): Boolean = {
-    val updated = dailyDataTable.insertOrUpdate(data)
-    Await.result(db.run(updated), 1.minute) > 0
+    val sqlCommand = dailyDataTable.insertOrUpdate(data)
+    Await.result(db.run(sqlCommand), 1.minute) > 0
   }
 
   def createFileIfNotExists(): Unit = {
     var targetDestination = new File("./database.db")
-
+    var sourceDestination = getClass.getClassLoader.getResourceAsStream("data.db");
     if !targetDestination.exists() then {
-      var sourceDestination =
-        getClass.getClassLoader.getResourceAsStream("data.db");
       Files.copy(sourceDestination, Paths.get("database.db"))
     }
   }

@@ -22,10 +22,23 @@ object MarketService {
 
   def getInformation(): Unit = {
 
+
+
   }
 
   def getExchangeInformation(): Unit = {
+    val description =exClass.Exchange.getExchangeSpecification().getExchangeDescription()
+    
+    println(s"""${StringFormat.makeMenuString("Exchange Information")}
+            |
+            |
+            |  Exchange Name: ${exName.toLowerCase().capitalize}
+            |  Description: $description
+            |
+            """.stripMargin)
 
+    StdIn.readLine()
+    clearTerminal()
   }
 
   def getOrderBookInformation() : Unit ={
@@ -121,7 +134,8 @@ object MarketService {
           case y: String if y.toLowerCase() == "y" => {
                                                         userAgreed()
                                                         StdIn.readLine()
-                                                        return status = false
+                                                        
+                                                        return {status = false; clearTerminal(); }
                                                       }
           case n: String if n.toLowerCase() == "n" => return
           case _ => clearTerminal(); println(valueNoExistString)

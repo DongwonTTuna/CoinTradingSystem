@@ -17,11 +17,7 @@ import java.util.UUID
 import dongwontuna.net.coinTradingSystem.types.EXCHANGE
 
 
-def clearTerminal() = print("\u001b[2J\u001b[H")
-val valueNoExistString = "=============ERROR=============\n\nPlease enter the valid Value.\n\n=============ERROR=============\n\n"
-val orderString = s"""
-        || Num |  Symbol  |  Type  |  triggerPrice  |  targetPrice  |   amount   |
-        |=-----------------------------------------------------------------------="""
+
 
 object CLIMenu {
   var exClass: AnExchange = _
@@ -75,7 +71,7 @@ object CLIMenu {
   }
 
   def launchExchange(exClass: AnExchange): Unit = {
-    
+
     this.exClass = exClass
     this.exName = exClass.Name
     TradeService.initialize(exClass)
@@ -83,21 +79,23 @@ object CLIMenu {
     AccountService.initialize(exClass)
     StringFormat.initialize(exClass)
 
-    var resultAPI: API = sqlManager.getAPIKEY(exName)
-
-    def setupAPIKey(): Unit = {
+    def setupAPIKey(): API = {
+      clearTerminal()
       println(s"Setup the API Key of ${exClass.Name} Exchange")
       print("API KEY : ")
       val apiKey = StdIn.readLine()
       print("SECRET KEY :")
       val secretKey = StdIn.readLine()
       sqlManager.upsertAPIKEY(new API(exClass.Name, apiKey, secretKey))
-      resultAPI = sqlManager.getAPIKEY(exClass.Name)
+      sqlManager.getAPIKEY(exClass.Name).headOption match {
+        case None => throw new Exception("Cannot resolve catching the API key")
+        case Some(value) => value
+      }
     }
-
-    if resultAPI.exchangeName == "NONE" then {
-      setupAPIKey()
-      resultAPI = sqlManager.getAPIKEY(exClass.Name)
+    
+    var resultAPI: API = sqlManager.getAPIKEY(exName) match {
+      case None => setupAPIKey()
+      case Some(value) => value
     }
 
     while true do {

@@ -5,6 +5,12 @@ import dongwontuna.net.coinTradingSystem.AnExchange
 import scala.io.StdIn
 import org.knowm.xchange.instrument.Instrument
 
+def clearTerminal() = print("\u001b[2J\u001b[H")
+val valueNoExistString = "=============ERROR=============\n\nPlease enter the valid Value.\n\n=============ERROR=============\n\n"
+val orderString = s"""
+        || Num |  Symbol  |  Type  |  triggerPrice  |  targetPrice  |   amount   |
+        |=-----------------------------------------------------------------------="""
+
 object StringFormat {
 
   var exClass: AnExchange = _
