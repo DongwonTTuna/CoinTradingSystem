@@ -10,22 +10,29 @@ import scala.collection.JavaConverters._
 import org.knowm.xchange.dto.marketdata.Ticker
 import org.knowm.xchange.dto.marketdata.OrderBook
 import org.knowm.xchange.dto.marketdata.Trades
-
+import scala.io.StdIn
 
 class AnExchange(exName: Class[_ <: Exchange]) {
   val Exchange: Exchange = ExchangeFactory.INSTANCE.createExchange(exName)
   val Name = Exchange.getExchangeSpecification().getExchangeName().toUpperCase()
-  val marketDataService: MarketDataService = Exchange.getMarketDataService
-  val accountService: AccountService = Exchange.getAccountService
-  val tradeService: TradeService = Exchange.getTradeService
+  var marketDataService: MarketDataService = _
+  var accountService: AccountService = _
+  var tradeService: TradeService = _
   val instruments: Map[String, Instrument] = Exchange.getExchangeInstruments().asScala.toList.map(instrument => instrument.toString -> instrument).toMap
   val defaultInstrument = Exchange.getExchangeInstruments().get(0)
 
+  def updateAPI(exAPI : API): Unit = {
+    val specification = this.Exchange.getDefaultExchangeSpecification()
+    specification.setApiKey(exAPI.apiKey)
+    specification.setSecretKey(exAPI.secretKey)
+    this.Exchange.applySpecification(specification)
+    this.marketDataService = this.Exchange.getMarketDataService()
+    this.accountService = this.Exchange.getAccountService()
+    this.tradeService = this.Exchange.getTradeService()
+  }
+
   def getInstrument(ticker: String) : Option[Instrument] = {
-    this.instruments.get(ticker) match {
-      case None => None
-      case Some(value) => Some(value)
-    }
+    this.instruments.get(ticker)
   }
 
   def getCurrentTicker(ticker: Instrument) : Ticker  = {

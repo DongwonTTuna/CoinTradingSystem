@@ -70,7 +70,6 @@ object Trade {
     }  
 
     def sellLimit(order: ORDER) : Boolean = {
-        println("Sell Limit")
         val exClass = getExclass(order)
         val instrument = exClass.getInstrument(order.ticker).get
         val newOrder : LimitOrder = LimitOrder(OrderType.ASK, java.math.BigDecimal(order.amount.toString),instrument,null,null,java.math.BigDecimal(order.triggerPrice.toString))

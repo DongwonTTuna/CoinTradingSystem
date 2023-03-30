@@ -1,6 +1,7 @@
 package dongwontuna.net.coinTradingSystem.CLI
 
 import scala.io.StdIn
+import scala.concurrent.ExecutionContext.Implicits.global
 import dongwontuna.net.coinTradingSystem.sqlManager
 import dongwontuna.net.coinTradingSystem.API
 import dongwontuna.net.coinTradingSystem.AnExchange
@@ -15,6 +16,10 @@ import concurrent.duration.DurationInt
 import java.util.UUID
 
 import dongwontuna.net.coinTradingSystem.types.EXCHANGE
+import scala.util.Try
+import scala.util.Failure
+import scala.util.Success
+import scala.concurrent.Future
 
 
 
@@ -72,30 +77,43 @@ object CLIMenu {
 
   def launchExchange(exClass: AnExchange): Unit = {
 
+    var isError: Boolean = false
+
     this.exClass = exClass
     this.exName = exClass.Name
-    TradeService.initialize(exClass)
-    MarketService.initialize(exClass)
-    AccountService.initialize(exClass)
-    StringFormat.initialize(exClass)
+    def initialize(): Future[Unit] = Future {
+      TradeService.initialize(exClass)
+      MarketService.initialize(exClass)
+      AccountService.initialize(exClass)
+      StringFormat.initialize(exClass)
+    }
+    initialize()
 
-    def setupAPIKey(): API = {
-      clearTerminal()
-      println(s"Setup the API Key of ${exClass.Name} Exchange")
+    def setupAPIKey(): Unit = {
+      println(s"Setup the API Key of ${exClass.Name} Exchange\n\n")
+
       print("API KEY : ")
       val apiKey = StdIn.readLine()
+      
       print("SECRET KEY :")
       val secretKey = StdIn.readLine()
+
       sqlManager.upsertAPIKEY(new API(exClass.Name, apiKey, secretKey))
-      sqlManager.getAPIKEY(exClass.Name).headOption match {
+      sqlManager.getAPIKEY(exClass.Name) match {
         case None => throw new Exception("Cannot resolve catching the API key")
-        case Some(value) => value
+        case Some(value) => Try(exClass.updateAPI(value)) match {
+                              case Failure(exception) => clearTerminal(); println(exception.getMessage()); sys.exit()
+                              case Success(value) => println(value); isError = false;
+                            }
       }
     }
     
-    var resultAPI: API = sqlManager.getAPIKEY(exName) match {
-      case None => setupAPIKey()
-      case Some(value) => value
+    sqlManager.getAPIKEY(exName) match {
+      case None => clearTerminal(); setupAPIKey()
+      case Some(value) => Try(exClass.updateAPI(value)) match {
+                            case Failure(exception) => isError = true; clearTerminal(); println(s"Error with Message : ${exception.getMessage()}\n"); println("If you are using GateIO, please input the v2 api key\n\n\nPlease press enter key twice to re-setup the APIKEY"); StdIn.readLine(); setupAPIKey()
+                            case Success(_) => None
+                          }
     }
 
     while true do {
@@ -115,6 +133,9 @@ object CLIMenu {
       |
       |  Number : """.stripMargin)
       val userInputed = StdIn.readLine()
+      while isError do {
+        Thread.sleep(1000)
+      }
       userInputed match
         case "1" => clearTerminal(); tradeServiceFunc()
         case "2" => clearTerminal(); marketServiceFunc()
@@ -165,6 +186,8 @@ object CLIMenu {
       |  Number : """.stripMargin)
 
       val selectedNum = StdIn.readLine()
+      
+
 
       selectedNum match {
         case "1" => clearTerminal(); MarketService.getInformation()
@@ -192,7 +215,7 @@ object CLIMenu {
       val selectedNum = StdIn.readLine()
 
       selectedNum match {
-        case "1" => clearTerminal();MarketService.getInformation()
+        case "1" => clearTerminal();AccountService.getAccountBalance()
         case "2" => clearTerminal();MarketService.getExchangeInformation()
         case "3" => clearTerminal();MarketService.getOrderBookInformation()
         case "4" => return

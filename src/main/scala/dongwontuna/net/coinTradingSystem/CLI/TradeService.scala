@@ -20,8 +20,8 @@ object TradeService {
   var exName: String = _
     
   def initialize(exClass: AnExchange): Unit = {
-        this.exClass = exClass
-        this.exName = exClass.Name
+    this.exClass = exClass
+    this.exName = exClass.Name
   }
 
 
@@ -206,7 +206,7 @@ object TradeService {
 
     if sqlManager.upsertOrder(result) then println("The order has been updated")
     else println("Cannot update the order")
-
+    
   }
 
   def deleteOrder(): Unit = {

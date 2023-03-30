@@ -100,6 +100,4 @@ object StringFormat {
     if diff % 2 == 0 then (" " * (diff / 2)) + s + (" " * (diff / 2))
     else " " * ((diff - 1) / 2) + s + " " * ((diff - 1) / 2 + 1)
   }
-
-
 }
