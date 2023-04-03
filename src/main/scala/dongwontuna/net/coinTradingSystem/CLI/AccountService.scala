@@ -22,7 +22,7 @@ object AccountService {
         val walletData : Wallet = exClass.accountService.getAccountInfo().getWallet()
         val balanceHeadString = "\n| Currency | Avilable Balance | Frozen balance | Loaned Balance | Withdrawing Balance | Depositing Balance |"
 
-        val balanceString = walletData.balances().asScala.toList.map(item => s"||${StringFormat.padMiddle(item.getCurrency().toString(),10)}|${StringFormat.padLeft(item.getAvailable().toString,18)}|${StringFormat.padLeft(item.getFrozen().toString,16)}|${StringFormat.padLeft(item.getLoaned().toString,16)}|${StringFormat.padLeft(item.getWithdrawing().toString,21)}|${StringFormat.padLeft(item.getDepositing().toString,20)}|").mkString("\n")
+        val balanceString = walletData.balances().asScala.toList.map(item => s"||${StringFormat.padMiddle(item.getCurrency().toString(),9)}|${StringFormat.padLeft(item.getAvailable().toString,18)}|${StringFormat.padLeft(item.getFrozen().toString,16)}|${StringFormat.padLeft(item.getLoaned().toString,16)}|${StringFormat.padLeft(item.getWithdrawing().toString,21)}|${StringFormat.padLeft(item.getDepositing().toString,20)}|").mkString("\n")
         println(s"""${StringFormat.makeMenuString("Wallet Balance",balanceHeadString)}
         |
         $balanceString
