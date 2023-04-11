@@ -10,6 +10,7 @@ import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks._
 import scala.concurrent.Future
 import scala.collection.mutable.ListBuffer
+import org.knowm.xchange.dto.marketdata.Trade
 object MarketService {
 
   var exClass: AnExchange = _
@@ -18,12 +19,6 @@ object MarketService {
   def initialize(exClass: AnExchange): Unit = {
         this.exClass = exClass
         this.exName = exClass.Name
-  }
-
-  def getInformation(): Unit = {
-
-
-
   }
 
   
@@ -91,7 +86,6 @@ object MarketService {
 
         val printList = tempPrintList.toList
         
-        // TODO: 뎁스에 가격 및 볼륨 추가하기
 
         for (y <- (YtotalSize-1) to 0 by -1) {
           var tempString = ""
@@ -127,7 +121,7 @@ object MarketService {
     }
     
     while true do {
-        print(s"""${StringFormat.makeMenuString(" Order Book Menu")}
+        print(s"""${StringFormat.makeMenuString("Order Book Menu")}
               |
               |  Would you like to retrieve data for the following symbol?
               |
@@ -151,8 +145,49 @@ object MarketService {
   }
   def getRecentTrades() : Unit = {
     val exName = exClass.Exchange.getExchangeSpecification().getExchangeName().toUpperCase()
+    var currentSymbol: Instrument = StringFormat.searchInstruments()
+    var status: Boolean = true
+
+    def userAgreed(): Future[Unit] = Future {
+      while status do {
+        clearTerminal()
+        val trades: List[Trade] = exClass.getRecentTrades(currentSymbol).getTrades().asScala.toList
+        val strings = trades.map((item)=> s"""|  ${item.getTimestamp()}
+                                              |  ${item.getType()}
+                                              |  ${item.getOriginalAmount()}
+                                              |  ${item.getPrice()}
+                                              |  ${item.getCurrencyPair()}
+                                              |""".stripMargin)
+        println(s"""|${StringFormat.makeMenuString("Recent Trades")}
+              | ${strings}
+              |  Press enter to exit
+              |
+              """.stripMargin)
+        Thread.sleep(500)
+      }
+    }
+
     while true do {
-      
+      print(s"""${StringFormat.makeMenuString("Recent Trades Menu")}
+              |
+              |  Would you like to retrieve data for the following symbol?
+              |
+              |  currentSymbol = $currentSymbol
+              | 
+              |  Y or N : """.stripMargin)
+
+      val input = StdIn.readLine
+
+      input match {
+        case y: String if y.toLowerCase() == "y" => {
+                                                      userAgreed()
+                                                      StdIn.readLine()
+                                                      
+                                                      return {status = false; clearTerminal(); }
+                                                    }
+        case n: String if n.toLowerCase() == "n" => return
+        case _ => clearTerminal(); println(valueNoExistString)
+      }
     }
   }
 }

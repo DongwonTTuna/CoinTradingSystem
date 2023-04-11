@@ -20,12 +20,12 @@ object AccountService {
     def getAccountBalance(): Unit = {
         clearTerminal()
         val walletData : Wallet = exClass.accountService.getAccountInfo().getWallet()
-        val balanceHeadString = s"""\n| Currency | Avilable Balance | Frozen balance | Loaned Balance | Withdrawing Balance | Depositing Balance |
+        val balanceHeadString = s"""\n||| Currency | Avilable Balance | Frozen balance | Loaned Balance | Withdrawing Balance | Depositing Balance |
                                      |=----------------------------------------------------------------------------------------------------------=""".stripMargin
 
-        val balanceString = walletData.balances().asScala.toList.map(item => s"||${StringFormat.padMiddle(item.getCurrency().toString(),9)}|${StringFormat.padLeft(item.getAvailable().toString,18)}|${StringFormat.padLeft(item.getFrozen().toString,16)}|${StringFormat.padLeft(item.getLoaned().toString,16)}|${StringFormat.padLeft(item.getWithdrawing().toString,21)}|${StringFormat.padLeft(item.getDepositing().toString,20)}|").mkString("\n")
-        println(s"""${StringFormat.makeMenuString("Wallet Balance",balanceHeadString)}
-        |
+        val balanceString = walletData.balances().asScala.toList.map(item => s"""|||${StringFormat.padMiddle(item.getCurrency().toString(),10)}|${StringFormat.padLeft(item.getAvailable().toString,18)}|${StringFormat.padLeft(item.getFrozen().toString,16)}|${StringFormat.padLeft(item.getLoaned().toString,16)}|${StringFormat.padLeft(item.getWithdrawing().toString,21)}|${StringFormat.padLeft(item.getDepositing().toString,20)}|
+                                                                                 |=----------------------------------------------------------------------------------------------------------=""".stripMargin).mkString("\n")
+        println(s"""${StringFormat.makeMenuString("Wallet Balance",balanceHeadString, 107)}
         $balanceString
         |""".stripMargin)
         println("\n\nPress the Enter key to Exit")

@@ -21,8 +21,8 @@ object StringFormat {
       this.exName = exClass.Name
   }
 
-  def makeMenuString(menuText: String, thirdText: String = ""): String = {
-    s"=------- ${exName.toLowerCase.capitalize} $menuText".padTo(84, "-").mkString("") + "=" + thirdText
+  def makeMenuString(menuText: String, thirdText: String = "", padNum : Int = 84): String = {
+    s"=------- ${exName.toLowerCase.capitalize} $menuText".padTo(padNum, "-").mkString("") + "=" + thirdText
   }
   
   def makeOrderString(orders: List[ORDER]): String = {

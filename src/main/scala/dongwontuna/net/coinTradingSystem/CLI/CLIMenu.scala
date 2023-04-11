@@ -176,12 +176,11 @@ object CLIMenu {
     while true do {
       print(s"""$menuString
       |
-      |  1. Get the Coin Information
-      |  2. Get the Exchange Information
-      |  3. Show the Order Books
-      |  4. Show the Recent Trades
+      |  1. Get the Exchange Information
+      |  2. Show the Order Books
+      |  3. Show the Recent Trades
       |
-      |  5. Return to Main Menu
+      |  4. Return to Main Menu
       |  
       |  Number : """.stripMargin)
 
@@ -190,11 +189,10 @@ object CLIMenu {
 
 
       selectedNum match {
-        case "1" => clearTerminal(); MarketService.getInformation()
-        case "2" => clearTerminal(); MarketService.getExchangeInformation()
-        case "3" => clearTerminal(); MarketService.getOrderBookInformation()
-        case "4" => clearTerminal(); MarketService.getRecentTrades()
-        case "5" => return
+        case "1" => clearTerminal(); MarketService.getExchangeInformation()
+        case "2" => clearTerminal(); MarketService.getOrderBookInformation()
+        case "3" => clearTerminal(); MarketService.getRecentTrades()
+        case "4" => return
         case _   => clearTerminal();println(valueNoExistString)
       }
     }
@@ -205,10 +203,8 @@ object CLIMenu {
       print(s"""$menuString
       |
       |  1. Get the Account Balance
-      |  2. Get the 
-      |  3. Get the Order Book Information
       |
-      |  4. Return to Main Menu
+      |  2. Return to Main Menu
       |  
       |  Number : """.stripMargin)
 
@@ -216,9 +212,7 @@ object CLIMenu {
 
       selectedNum match {
         case "1" => clearTerminal();AccountService.getAccountBalance()
-        case "2" => clearTerminal();MarketService.getExchangeInformation()
-        case "3" => clearTerminal();MarketService.getOrderBookInformation()
-        case "4" => return
+        case "2" => return
         case _   => clearTerminal();println(valueNoExistString)
       }
     }
